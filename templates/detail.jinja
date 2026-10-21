@@ -1,0 +1,27 @@
+{% extends "_base.jinja" %}
+
+{% block contenu %}
+   <div class="row justify-content-center  container mt-5">
+        <div class="col-md-7">
+            <img src="static/image/image.jpeg" class="w-75" alt="Image Pokemon">
+            <h3 class="mt-3"> {{lePokemon["name"]}}</h3>
+        </div>
+        <div class="col-md-5">
+            <ul>
+                <li>Rareté : {{lePokemon["rarity"]}} </li>
+                <li>Coût : {{lePokemon["cost"]}} </li>
+                <li>Date d'ajout : {{lePokemon["added_date"]}}</li>
+                <li>SuperType : {{lePokemon["supertype"]}} </li>
+                <li>Statut : {{lePokemon["status"]}} </li>
+                <li>Date d'obtention :{{lePokemon["added_date"]}} </li>
+                <li>Condition : {{lePokemon["condition"]}} </li>
+            </ul>
+            <form action="/recuperation_carte_modif" method="POST">
+                <input type="hidden" name="id_pokemon" value="{{ lePokemon["id"] }}" class="d-none"></input>
+                <button type="submit" class="btn btn-primary"> Modifier la carte </a> 
+            </form>   
+        </div>
+   </div>
+   
+
+{% endblock %}

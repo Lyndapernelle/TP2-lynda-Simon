@@ -1,0 +1,24 @@
+// Les fichiers sAss n'ont pas de point-virgule ni d'accolade
+// Vous pouvez utiliser des .scss OU .sass à votre choix
+
+@import "bootstrap"
+
+header
+    background-color: #042e6c
+    @extend .pt-5, .pb-3
+
+        
+    h1 a
+        @extend .display-5
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+
+    p
+        @extend .lead
+    
+
+footer
+    background-image: url("/static/image/banniere.png")
+    background-size: cover
+
+nav, main, footer
+    @extend .pb-5
