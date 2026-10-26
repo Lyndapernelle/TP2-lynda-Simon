@@ -36,7 +36,7 @@ def recherche():
        resultat = bd.rechercher(conn=conn,pNom=pNom,pNumero=pNumero, pSuperType =pSuperType,pRarete=pRarete)
     return render_template("recherche.jinja", lesPokemons = resultat, titre = "Recherche de pokemon")
 
-@bp_collection.route('/ajout_carte/<int:id_pokemon>', methods=["POST"])
+@bp_collection.route('/ajout_carte/<string:id_pokemon>', methods=["POST"])
 def collection_items(id_pokemon):
     condition_pokemon = request.form.get('condition', default='').strip()
     cout_pokemon = request.form.get('cout', type=int, default=0)
