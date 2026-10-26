@@ -5,54 +5,78 @@
         <div class="col-md-4 mt-2">
             <img src="static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" action="/modif_carte">
-            <section class="fs-4">
-                <div class="mb-2">
-                    <label class="form-label">Nom du Pokemon : </label>
-                    <input type="text" class="form-control w-50" name="nom_pokemon" value ="{{ ajouterPokemon["name"] }}"></input>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">Type : </label>
-                    <input type="text" class="form-control w-50" name="type_pokemon" value ="{{ ajouterPokemon["types"] | replace("[", "") | replace("]", "") | replace("'", "") }}"></input>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">Valeur : </label>
-                    <input type="text" class="form-control w-50" name ="num_pokemon" value="{{ ajouterPokemon["set_num"] }}"></input>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">Rareté : </label>
-                    <input type="text" class="form-control w-50" name="rarete_pokemon" value="{{ ajouterPokemon["rarity"] }}"></input>
-                </div>
-            </section>
-            <section class="fs-4">
-                <div class="mb-2">
-                    <label for="condition_carte" class="form-label">La condition : </label>
-                    <select name="condition" id="condition_carte" class="form-select w-50"> 
+        <section class="col-8 row d-flex align-items-center">
+            <div class="col-8">
+                <label class="fs-3">Nom du Pokemon : </label>
+                <input type="text" class="fs-3" name="nom_pokemon" value ="{{ ajouterPokemon["name"] }}"></input>
+            </div>
+            <div class="col-8">
+                <label class="fs-3">Type : </label>
+                <input type="text" class="fs-3" name="type_pokemon" value ="{{ ajouterPokemon["types"] | replace("[", "") | replace("]", "") | replace("'", "") }}"></input>
+            </div>
+            <div  class="col-8">
+                <label class="fs-3">Valeur : </label>
+                <input type="text" class="fs-3" name ="num_pokemon" value="{{ ajouterPokemon["set_num"] }}"></input>
+            </div>
+            <div class="col-8">
+                <label class="fs-3">Rareté : </label>
+                <input type="text" class="fs-3" name="rarete_pokemon" value="{{ ajouterPokemon["rarity"] }}"></input>
+            </div>
+        </section>
+    </section>
+    <form method="POST" class="mt-5" action="/modif_carte">
+        <section class = "row">
+            <div class="col {{message_condition}}">
+                <div>
+                    <label for="condition">La condition : </label>
+                    <select name="condition" id="condition"> 
                         <option value="presque neuve"> presque neuve </option>
-                        <option value=" légèrement usée">  légèrement usée </option>
+                        <option value="légèrement usée"> légèrement usée </option>
                         <option value="modérément usée"> modérément usée </option>
                         <option value="très usée"> très usée </option>
                         <option value="abîmée"> abîmée </option>
                     </select>
                 </div>
-                <div class="mb-2">
-                    <label class="form-label"> Coût de la carte : </label>
-                    <input type="number" class="form-control w-50" name="cout"></input>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label"> Statut de la carte : </label>
-                    <input type="text" class="form-control w-50" name="statut"/>
-                </div>
-            </section>
-            <div class="text-center">
-                <div class="mt-3">
-                    <input type="hidden" name="id_pokemon" value="{{ ajouterPokemon["id"] }}" class="d-none"></input>
-                    <button type="submit" class="btn btn-primary">Modifier la carte</a>
-                </div>
+                <p>
+                {% if message_condition == 'is-invalid' %}
+                    Ce champ est invalide
+                {% endif %}
+                </p>
             </div>
-        </form>
-    </section>
-   
+            <div class = "col {{message_cout}}">
+                <div>
+                    <label for="cout"> Coût de la carte : </label>
+                    <input type="number" name="cout" id="cout"></input>
+                </div>
+                <p>
+                {% if message_cout == 'is-invalid' %}
+                    Ce champ est invalide
+                {% endif %}
+                </p>
+            </div>
+            <div class = "col {{message_statut}}">
+                <div>
+                    <label for="statut"> Statut de la carte : <label>
+                    <select name="statut" id="statut"> 
+                        <option value="recherchée"> recherchée </option>
+                        <option value="disponible"> disponible </option>
+                    </select>
+                </div>
+                <p>
+                {% if message_statut == 'is-invalid' %}
+                Ce champ est invalide
+                {% endif %}
+                </p>
+            </div>
+        </section>
+        <div class="row">
+            <div class="col-12 mt-3">
+                <input type="hidden" name="id_pokemon" value="{{ ajouterPokemon["id"] }}" class="d-none"></input>
+                <label class=""> Envoyer les données </label>
+                <button type="submit" class="btn btn-primary">Modifier la collection</a>
+            </div>
+        </div>
+    </form>
       
  
 {% endblock %}

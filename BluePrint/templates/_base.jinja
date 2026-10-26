@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>Gabarit TP Web 3</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="https://www.cegepgarneau.ca/favicon.ico">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body class="">
+    <header class="" >
+        <div class="row container justify-content-around">
+            <h1 class="col-md-6"><a href="/" class="text-decoration-none text-black fw-2">Pokémon TCG Collection</a></h1>
+            <nav class="navbar navbar-expand-lg col-md-3 row">
+                <div id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item col-md-6">
+                            <a class="nav-link btn btn-warning text-black fw-4" aria-current="page" href="{{url_for('collection.recherche')}}">Ajouter une carte</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <main class="bg-white container mt-5">
+        <h2 class="d-flex justify-content-center mb-3">{{ titre | default("Accueil") }} | Pokémon TCG Collection</h2>
+
+        {% block contenu %}
+            <p>Voici une valeur par défaut</p>
+        {% endblock %}
+
+    </main>
+
+    <footer>
+        <div class="d-flex container flex-row p-2 justify-content-between">
+            <p class="p-2 fw-3 fs-4 text-black">Auteurs : Simon Bolduc, Jérôme Guay, Lynda Folac</p>
+            <a class="p-2 text-black" href="https://jinja.palletsprojects.com/en/stable/templates/" target="_blank" title="jinja.palletsprojects.com">
+                Documentation officielle de Jinja
+            </a>
+        </div>
+    </footer>
+</body>

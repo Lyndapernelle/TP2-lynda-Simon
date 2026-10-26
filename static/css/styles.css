@@ -11145,4 +11145,13 @@ header h1 a {
 footer {
   background-image: url("/static/image/banniere.png");
   background-size: cover;
+}
+
+.is-invalid input {
+  border: solid 1px red;
+  border-radius: 5px;
+}
+.is-invalid p {
+  color: red;
+  font-size: small;
 }/*# sourceMappingURL=styles.css.map */
