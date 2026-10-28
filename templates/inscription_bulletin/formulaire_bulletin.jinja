@@ -1,0 +1,19 @@
+{% extends "_base.jinja" %}
+
+{% block contenu %}
+
+<form method="POST" action="{{ url_for('bulletin.confirmation') }}" class="align-items-center">
+    <label class="form-label"> Mail: </label>
+     <input type="text" class="form-control w-50" name="mail_utilisateur"></input>
+    <label for="frequence_bulletin" class="form-label">La fréquence: </label>
+    <select name="frequence" id="frequence" class="form-select w-50">
+         <option value="quotidien"> Quotidien </option>
+         <option value="hebdomadaire"> Hebdomadaire </option>
+         </option value="mensuel"> Mensuel </option>
+    </select> 
+    <label>Terme et utilisation<label>
+    <checkbox status="required"></checkbox>
+    <button type="submit" class="btn btn-primary"><a href="{{ url_for('bulletin.inscription')}}" class="text-white text-decoration-none">Recevoir le bulletin</a></button>
+</form>
+
+{% endblock %}

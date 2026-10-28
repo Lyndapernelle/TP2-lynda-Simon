@@ -11,12 +11,14 @@ import re
 import html
 from config import Config
 from collection import bp_collection
+from bulletin import bp_inscription_bulletin
 
 config = Config()
 app = Flask(__name__)
 logger = create_logger(app)
 
 app.register_blueprint(bp_collection, url_prefix='/collection')
+app.register_blueprint(bp_inscription_bulletin, url_prefix='/inscription')
 
 
 

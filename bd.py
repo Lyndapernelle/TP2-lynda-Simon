@@ -8,6 +8,7 @@ import mysql.connector
 from config import Config
 from flask import abort
 
+
 config = Config
 
 
@@ -140,3 +141,12 @@ def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
             )
             except Exception:
                 abort(500,"Le serveur a rencontré une erreur.")
+         
+        
+     
+     
+     
+   
+
+
+     

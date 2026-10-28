@@ -10,8 +10,11 @@ import bd
 import re
 import html
 from config import Config
+from bulletin import bp_inscription_bulletin
 
 bp_collection= Blueprint('collection', __name__)
+
+bp_collection.register_blueprint(bp_inscription_bulletin, url_prefix="inscription")
 
 
 
@@ -38,30 +41,31 @@ def recherche():
 
 @bp_collection.route('/ajout_carte', methods=["POST","GET"])
 def ajouter():
-    id_pokemon = request.form.get("id_pokemon").strip()
-    condition_pokemon = request.form.get('condition', default='').strip()
-    cout_pokemon = request.form.get('cout', type=int, default=0)
-    statut_pokemon = request.form.get('statut', default='').strip()
+    if request.method == "POST":
+    
+        id_pokemon = request.form.get("id_pokemon").strip()
+        condition_pokemon = request.form.get('condition', default='').strip()
+        cout_pokemon = request.form.get('cout', type=int, default=0)
+        statut_pokemon = request.form.get('statut', default='').strip()
 
-    message_condition = ''
-    message_cout = ''
-    message_statut = ''
+        message_condition = ''
+        message_cout = ''
+        message_statut = ''
 
-    if not id_pokemon:
-        abort(404, "paramêtre 'id_pokemon' invalide")
+        if not id_pokemon:
+            abort(404, "paramêtre 'id_pokemon' invalide")
 
-    invalide = False
+        invalide = False
 
-    if not valide_condition(condition_pokemon):
-        message_condition = 'is-invalid'
-        invalide = True
-    if not (cout_pokemon >= 0):
-        message_cout = 'is-invalid'
-        invalide = True
-    if not valide_statut(statut_pokemon):
-        message_statut = 'is-invalid'
-        invalide = True
-
+        if not valide_condition(condition_pokemon):
+            message_condition = 'is-invalid'
+            invalide = True
+        if not (cout_pokemon >= 0):
+            message_cout = 'is-invalid'
+            invalide = True
+        if not valide_statut(statut_pokemon):
+            message_statut = 'is-invalid'
+            invalide = True
 
     if(invalide):
         with bd.creer_connexion() as conn:
