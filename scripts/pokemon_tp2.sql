@@ -30,3 +30,9 @@ CREATE TABLE `offres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
  
+CREATE OR REPLACE TABLE inscription_bulletin(
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `courriel` VARCHAR(50) UNIQUE,
+  `frequence` ENUM('quotidien','hebdomadaire','mensuel') UNSIGNED NOT NULL,
+  `annulee` tinyint(1)
+)

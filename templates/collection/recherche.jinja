@@ -55,7 +55,7 @@
                                 <li class="list-group-item">Rareté : {{ ligne["rarity"] }}</li>
                             {% endif %}
 
-                            <li class="list-group-item"> <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',id_pokemon=ligne["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button></li>
+                            <li class="list-group-item"> <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter ',id_pokemon=ligne["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button></li>
                         </ul>
                         
                     </div>

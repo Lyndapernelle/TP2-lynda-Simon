@@ -3,7 +3,7 @@
 {% block contenu %}
    <div class="row justify-content-center  container mt-5">
         <div class="col-md-7">
-            <img src="static/image/image.jpeg" class="w-75" alt="Image Pokemon">
+            <img src="../static/image/image.jpeg" class="w-75" alt="Image Pokemon">
             <h3 class="mt-3"> {{lePokemon["name"]}}</h3>
         </div>
         <div class="col-md-5">
@@ -15,7 +15,7 @@
                 <li>Statut : {{lePokemon["status"]}} </li>
                 <li>Date d'obtention :{{lePokemon["added_date"]}} </li>
                 <li>Condition : {{lePokemon["condition"]}} </li>
-                <li> <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.modifier_carte',id_pokemon=lePokemon["id"])}}" class="text-white text-decoration-none">Modifier la carte</a></button></li> 
+                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.modifier_carte',id_pokemon=lePokemon["id"])}}" class="text-white text-decoration-none">Modifier la carte</a></button>
             </ul>
         </div>
    </div>

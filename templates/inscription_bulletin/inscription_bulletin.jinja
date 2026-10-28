@@ -1,0 +1,29 @@
+{% extends "_base.jinja" %}
+
+{% block contenu %}
+    <div class="container">
+        <form action="{{ url_for('inscription_bulletin.inscrire') }}" method="POST" class=" justify-content-center mt-4">
+            <div class="mb-4">
+                <label for="courriel" class="form-label">Courriel : </label>
+                <input type="text" name="courriel" id="courriel" class="form-control w-75">
+                <p class="text-danger">{{message_erreur_courriel}}</p>
+            </div>
+            <div class="mb-4">
+                <label for="chk-conf" class="form-check-label">Accepter vous les termes et conditions? </label>
+                <input type="checkbox" name="chk-conf" id="chk-conf" class="form-check-input mb-3">
+                <p class="text-danger">{{message_erreur_check}}</p>
+            </div>
+            <div class="mb-4">
+                <label>Fréquence :</label>
+                <select class="form-select" id="frequence">
+                    <option selected>Choisir une fréquence...</option>
+                    <option value="quotidien">Quotidien</option>
+                    <option value="hebdomadaire">Hebdomadaire</option>
+                    <option value="mensuel">Mensuel</option>
+                </select>
+                <p class="text-danger">{{message_erreur_select}}</p>
+            </div>
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
+        </form>
+    </div>
+{% endblock %}

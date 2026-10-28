@@ -140,3 +140,30 @@ def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
             )
             except Exception:
                 abort(500,"Le serveur a rencontré une erreur.")
+
+def inscrire(conn,courriel,frequence):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("INSERT INTO inscription_bulletin (`courriel`, `frequence`, `annulee`) "
+            "VALUES(%(courriel)s, %(frequence)s, '1')",
+            {
+                'courriel' : courriel,
+                'frequence' : frequence,
+            }     
+            )
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+        return curseur.lastrowid
+
+def recherche_courriel(conn,courriel):
+     with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("select id from inscription_bulletin ib  where courriel= %(courriel)s",
+            {
+                'courriel' : courriel,
+            }
+            )
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+        resultat = curseur.fetchone()
+        return resultat

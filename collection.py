@@ -38,7 +38,7 @@ def recherche():
 
 @bp_collection.route('/ajout_carte', methods=["POST","GET"])
 def ajouter():
-    id_pokemon = request.form.get("id_pokemon").strip()
+    id_pokemon = request.args.get("id_pokemon")
     condition_pokemon = request.form.get('condition', default='').strip()
     cout_pokemon = request.form.get('cout', type=int, default=0)
     statut_pokemon = request.form.get('statut', default='').strip()
@@ -73,9 +73,9 @@ def ajouter():
        bd.ajouter(conn=conn,id=id_pokemon,condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon)
     return redirect('/', code = 303)
 
-@bp_collection.route('/modif_carte', methods=["POST"])
+@bp_collection.route('/modif_carte', methods=["POST","GET"])
 def modifier_carte():
-    id_pokemon = request.form.get("id_pokemon").strip()
+    id_pokemon = request.args.get("id_pokemon")
     if not id_pokemon :
         abort(404, "paramêtre 'id_pokemon' invalide") 
     condition_pokemon = request.form.get('condition', default='').strip()
@@ -110,9 +110,9 @@ def modifier_carte():
         return redirect('/', code = 303)
 
 
-@bp_collection.route('/detail', methods = ["GET","POST"])
+@bp_collection.route('/detail', methods = ["POST"])
 def afficher_detail():
-    id_pokemon = request.form.get("id_pokemon")
+    id_pokemon = request.args.get("id_pokemon")
     if not id_pokemon :
         abort(404,"La carte n'existe pas")     
     else:
