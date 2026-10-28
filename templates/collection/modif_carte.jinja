@@ -5,7 +5,7 @@
         <div class="col-md-4 mt-2">
             <img src="static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" action="/modif_carte">
+        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.modifier_carte') }}">
             <section class="fs-4">
                 <div class="mb-2">
                     <label class="form-label">Nom du Pokemon : </label>
@@ -44,12 +44,7 @@
                     <input type="text" class="form-control w-50" name="statut"/>
                 </div>
             </section>
-            <div class="text-center">
-                <div class="mt-3">
-                    <input type="hidden" name="id_pokemon" value="{{ ajouterPokemon["id"] }}" class="d-none"></input>
-                    <button type="submit" class="btn btn-primary">Modifier la carte</a>
-                </div>
-            </div>
+                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.modifier_carte',id_pokemon=ligne["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
         </form>
     </section>
    

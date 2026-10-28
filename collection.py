@@ -34,10 +34,11 @@ def recherche():
 
     with bd.creer_connexion() as conn:
        resultat = bd.rechercher(conn=conn,pNom=pNom,pNumero=pNumero, pSuperType =pSuperType,pRarete=pRarete)
-    return render_template("recherche.jinja", lesPokemons = resultat, titre = "Recherche de pokemon")
+    return render_template("collection/recherche.jinja", lesPokemons = resultat, titre = "Recherche de pokemon")
 
-@bp_collection.route('/ajout_carte/<string:id_pokemon>', methods=["POST"])
-def collection_items(id_pokemon):
+@bp_collection.route('/ajout_carte', methods=["POST","GET"])
+def ajouter():
+    id_pokemon = request.form.get("id_pokemon").strip()
     condition_pokemon = request.form.get('condition', default='').strip()
     cout_pokemon = request.form.get('cout', type=int, default=0)
     statut_pokemon = request.form.get('statut', default='').strip()
@@ -64,36 +65,18 @@ def collection_items(id_pokemon):
 
     if(invalide):
         with bd.creer_connexion() as conn:
-            with conn.get_curseur() as curseur:
-                curseur.execute("select * from pokemon_card where id = %(id_pokemon)s",
-                {
-                    'id_pokemon' : id_pokemon
-                }
-                )
-                resultat = curseur.fetchone()
-                return render_template("ajout_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter  une carte", 
-                    message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)
-    
+            resultat=bd.selectionner(conn=conn,id=id_pokemon)
+            return render_template("collection/ajout_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter  une carte", 
+                message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)
+
     with bd.creer_connexion() as conn:
-        with conn.get_curseur() as curseur:
-            try:
-                curseur.execute("INSERT INTO collection_items (`card_id`, `condition`, `cost`, `status`) "
-                "VALUES(%(card_id)s, %(condition)s, %(cout)s, %(status)s)",
-                {
-                    'card_id' : id_pokemon,
-                    'condition' : condition_pokemon,
-                    'cout' : cout_pokemon,
-                    'status' : statut_pokemon
-                }
-            )
-            except Exception:
-                abort(500,"Le serveur a rencontré une erreur.")
+       bd.ajouter(conn=conn,id=id_pokemon,condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon)
     return redirect('/', code = 303)
 
 @bp_collection.route('/modif_carte', methods=["POST"])
 def modifier_carte():
-    id_pokemon_string = request.form.get("id_pokemon").strip()
-    if not id_pokemon_string :
+    id_pokemon = request.form.get("id_pokemon").strip()
+    if not id_pokemon :
         abort(404, "paramêtre 'id_pokemon' invalide") 
     condition_pokemon = request.form.get('condition', default='').strip()
     cout_pokemon = request.form.get('cout', type=int, default=0)
@@ -118,58 +101,26 @@ def modifier_carte():
 
     if(invalide):
         with bd.creer_connexion() as conn:
-            with conn.get_curseur() as curseur:
-                curseur.execute("select * from pokemon_card where id = %(id_pokemon)s",
-                {
-                    'id_pokemon' : id_pokemon_string
-                }
-                )
-                resultat = curseur.fetchone()
-                return render_template("modif_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter  une carte", 
-                    message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)
+            resultat = bd.selectionner(conn=conn,id=id_pokemon)
+            return render_template("collection/modif_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter  une carte", 
+                message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)
 
     with bd.creer_connexion() as conn:
-        with conn.get_curseur() as curseur:
-            try:
-                curseur.execute("UPDATE collection_items "
-                "SET status = %(pokemon_status)s, "
-                "cost = %(pokemon_cout)s, "
-                "`condition` = %(pokemon_condition)s " 
-                "WHERE card_id = %(pokemon_id)s ",
-                {
-                    'pokemon_id' : id_pokemon_string,
-                    'pokemon_condition' : condition_pokemon,
-                    'pokemon_cout' : cout_pokemon,
-                    'pokemon_status' : statut_pokemon
-
-                })
-            except Exception:
-                abort(500,"Le serveur a rencontré une erreur.")
-            return redirect('/', code = 303)
+        bd.modifier(conn,id,condition_pokemon,cout_pokemon,statut_pokemon)
+        return redirect('/', code = 303)
 
 
-@bp_collection.route('/detail', methods = ["POST"])
+@bp_collection.route('/detail', methods = ["GET","POST"])
 def afficher_detail():
-    id_pokemon_string = request.form.get('id_pokemon')
-    if not id_pokemon_string :
+    id_pokemon = request.form.get("id_pokemon")
+    if not id_pokemon :
         abort(404,"La carte n'existe pas")     
     else:
         with bd.creer_connexion() as conn:
-            with conn.get_curseur() as curseur:
-                try:
-                    curseur.execute("select pc.*, ci.added_date, ci.condition, ci.cost, ci.status" +
-                    " from collection_items ci"+
-                    " join pokemon_card pc on pc.id = ci.card_id"+
-                    " where ci.id = %(id)s",
-                    {
-                        'id': id_pokemon_string
-                    })
-                except Exception:
-                    abort(500,"Le serveur a rencontré une erreur.")
-                resultat = curseur.fetchone()
+           resultat = bd.afficher_detail(conn=conn,id=id_pokemon)
         if not resultat :
             abort(404,"La carte n'existe pas")
-        return render_template("detail.jinja", lePokemon = resultat, titre = "Détails")
+        return render_template("collection/detail.jinja", lePokemon = resultat, titre = "Détails")
 
 def valide_condition(pCondition):
     """ Recoit la condition de la carte en paramêtre et retourne si elle est valide ou non """

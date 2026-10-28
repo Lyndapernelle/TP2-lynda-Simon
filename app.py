@@ -18,12 +18,14 @@ logger = create_logger(app)
 
 app.register_blueprint(bp_collection, url_prefix='/collection')
 
+
+
 @app.route("/")
 def index(): 
     pokemon = []
     with bd.creer_connexion() as conn:
         pokemon= bd.affiche_carte_accueil(conn=conn)
-    return render_template("index.jinja", lesPokemons = pokemon)        
+    return render_template("collection/index.jinja", lesPokemons = pokemon)        
 
 @app.errorhandler(400)
 def param_manquant(e):

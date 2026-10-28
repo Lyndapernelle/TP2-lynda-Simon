@@ -34,11 +34,11 @@
                         {% if ligne["status"] is not none %}
                             <li class="list-group-item"> Status : {{ ligne["status"] }} </li>
                         {% endif %}
+                        <form method="POST" action="{{ url_for('collection.afficher_detail') }}">
+                            <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
+                            <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
+                        </form>
                     </ul>
-                    <form action="/detail" method="post" class="text-center">
-                        <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
-                        <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
-                    </form>
                 </div>
             {%endfor%}
         </div>

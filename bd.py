@@ -82,3 +82,61 @@ def rechercher(conn, pNom,pNumero,pSuperType,pRarete):
                     abort(500,"Le serveur a rencontré une erreur.")
                 resultat = curseur.fetchall()
                 return resultat
+
+def afficher_detail(conn,id):
+      with conn.get_curseur() as curseur:
+                     try:
+                         curseur.execute("select pc.*, ci.added_date, ci.condition, ci.cost, ci.status" +
+                         " from collection_items ci"+
+                         " join pokemon_card pc on pc.id = ci.card_id"+
+                         " where ci.id = %(id)s",
+                         {
+                             'id': id
+                         })
+                     except Exception:
+                         abort(500,"Le serveur a rencontré une erreur.")
+                     resultat = curseur.fetchone()
+                     return resultat
+
+def modifier(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("UPDATE collection_items "
+            "SET status = %(pokemon_status)s, "
+            "cost = %(pokemon_cout)s, "
+            "`condition` = %(pokemon_condition)s " 
+            "WHERE card_id = %(pokemon_id)s ",
+            {
+                'pokemon_id' : id,
+                'pokemon_condition' : condition_pokemon,
+                'pokemon_cout' : cout_pokemon,
+                'pokemon_status' : statut_pokemon
+
+            })
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+
+def selectionner(conn,id):
+    with conn.get_curseur() as curseur:
+        curseur.execute("select * from pokemon_card where id = %(id_pokemon)s",
+        {
+            'id_pokemon' : id
+        }
+        )
+        resultat = curseur.fetchone()
+        return resultat
+
+def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
+       with conn.get_curseur() as curseur:
+            try:
+                curseur.execute("INSERT INTO collection_items (`card_id`, `condition`, `cost`, `status`) "
+                "VALUES(%(card_id)s, %(condition)s, %(cout)s, %(status)s)",
+                {
+                    'card_id' : id,
+                    'condition' : condition_pokemon,
+                    'cout' : cout_pokemon,
+                    'status' : statut_pokemon
+                }
+            )
+            except Exception:
+                abort(500,"Le serveur a rencontré une erreur.")

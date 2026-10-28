@@ -2,7 +2,7 @@
 
 {% block contenu %}
     <div class="container">
-        <form action="/recherche" method="GET" class="row align-items-center justify-content-center mt-4">
+        <form action="{{ url_for('collection.recherche') }}" method="GET" class="row align-items-center justify-content-center mt-4">
             <div class="col-md-4 ">
                 <div class="mb-4">
                     <label for="nom_pokemon" class="form-label">Nom du Pokemon :</label>
@@ -34,13 +34,13 @@
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
             {%if lesPokemons|length == 0 %}
                 <div class="text-center">
-                    <img src="static/image/iconeVide.png" alt= "Aucun résultat" class="w-25"/>
+                    <img src="../static/image/iconeVide.png" alt= "Aucun résultat" class="w-25"/>
                     <p class ="fs-2 fw-bold mt-3"> Aucun résultat  🥀</p>     
                 </div>
             {% else %}
                 {%for ligne in lesPokemons %}
                     <div class="card" style="width: 16rem;">
-                        <img src="static/image/image.jpeg" class="card-img-top" alt="Image Pokemon">
+                        <img src="../static/image/image.jpeg" class="card-img-top" alt="Image Pokemon">
                         <div class="card-body">
                             <h5 class="card-title">{{ligne["name"]}}</h5>
                         </div>
@@ -54,13 +54,10 @@
                             {% if ligne["rarity"] is not none %}
                                 <li class="list-group-item">Rareté : {{ ligne["rarity"] }}</li>
                             {% endif %}
+
+                            <li class="list-group-item"> <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',id_pokemon=ligne["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button></li>
                         </ul>
-                        <div class="card-body d-flex justify-content-center">
-                            <form action="/recuperation_carte_ajout" method ="POST" class="d-flex align-items-center">
-                                <input type="hidden" name="id_pokemon" value="{{ ligne["id"] }}" class="d-none"></input>
-                                <button type="submit" class="btn btn-primary">Ajouter à la collection</a>
-                            </form>
-                        </div>
+                        
                     </div>
                 {%endfor%}
             {% endif %}   

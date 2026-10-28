@@ -15,12 +15,8 @@
                 <li>Statut : {{lePokemon["status"]}} </li>
                 <li>Date d'obtention :{{lePokemon["added_date"]}} </li>
                 <li>Condition : {{lePokemon["condition"]}} </li>
+                <li> <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.modifier_carte',id_pokemon=lePokemon["id"])}}" class="text-white text-decoration-none">Modifier la carte</a></button></li> 
             </ul>
-            //Remplacer par url_for
-            <form action="/recuperation_carte_modif" method="POST">
-                <input type="hidden" name="id_pokemon" value="{{ lePokemon["id"] }}" class="d-none"></input>
-                <button type="submit" class="btn btn-primary"> Modifier la carte </a> 
-            </form>   
         </div>
    </div>
    
