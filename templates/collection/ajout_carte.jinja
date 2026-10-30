@@ -3,12 +3,12 @@
 {% block contenu %}
     <section class="row justify-content-between">
         <div class="col-md-4 mt-2">
-            <img src="static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
+            <img src="/static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.modifier_carte') }}">
+        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.ajouter') }}">
             <section class="fs-4">
                 <div class="mb-2">
-                    <label class="form-label">Nom du Pokemon : </label>
+                    <label class="form-label">Nom de la carte : </label>
                     <input type="text" class="form-control w-50" name="nom_pokemon" value ="{{ ajouterPokemon["name"] }}"></input>
                 </div>
                 <div class="mb-2">
@@ -41,11 +41,14 @@
                 </div>
                 <div class="mb-2">
                     <label class="form-label"> Statut de la carte : </label>
-                    <input type="text" class="form-control w-50" name="statut"/>
+                    <select name="statut" id="statut-carte" class="form-select w-50"> 
+                        <option value="disponible">Disponible</option>
+                        <option value="recherché">Recherché</option>
+                    </select>
                 </div>
             </section>
             <div class="text-center">
-                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',id_pokemon=ligne["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
+                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',id_pokemon=ajouterPokemon["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
             </div>
         </form>
     </section>

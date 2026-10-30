@@ -19,10 +19,11 @@ bp_collection= Blueprint('collection', __name__)
 def recherche():
     pNom = request.args.get('nom_pokemon', default='').strip()
     pNumero = request.args.get('numero',type=int)
-    pSuperType = request.args.get('supertype', default='').strip()
+    pType = request.args.get('types', default='').strip()
     pRarete = request.args.get('rarete',default='').strip() # Ces paramêtres ne sont pas obligatoires
-
-    if not valide_supertype(pSuperType):
+    pSuperType = request.args.get('supertype')
+        
+    if not valide_supertype(pType):
         abort(400," Paramètre 'superType' invalide")
 
     caracteres_interdits = re.compile('<(.*)>.*?|<(.*) />')
@@ -33,15 +34,16 @@ def recherche():
         abort(400," Paramètre 'rarete' invalide")
 
     with bd.creer_connexion() as conn:
-       resultat = bd.rechercher(conn=conn,pNom=pNom,pNumero=pNumero, pSuperType =pSuperType,pRarete=pRarete)
+       resultat = bd.rechercher(conn=conn,pNom=pNom,pNumero=pNumero, pType=pType,pRarete=pRarete ,pSuperType=pSuperType)
     return render_template("collection/recherche.jinja", lesPokemons = resultat, titre = "Recherche de pokemon")
 
-@bp_collection.route('/ajout_carte', methods=["POST","GET"])
-def ajouter():
-    id_pokemon = request.form.get("id_pokemon").strip()
-    condition_pokemon = request.form.get('condition', default='').strip()
-    cout_pokemon = request.form.get('cout', type=int, default=0)
-    statut_pokemon = request.form.get('statut', default='').strip()
+@bp_collection.route('/ajout_carte/<string:id_pokemon>', methods=["POST","GET"])
+def ajouter(id_pokemon):
+
+    nom_pokemon = request.args.get('nom', default= '').strip()
+    condition_pokemon = request.args.get('condition', default='').strip()
+    cout_pokemon = request.args.get('cout', type=int, default=0)
+    statut_pokemon = request.args.get('statut', default='').strip()
 
     message_condition = ''
     message_cout = ''
@@ -66,7 +68,7 @@ def ajouter():
     if(invalide):
         with bd.creer_connexion() as conn:
             resultat=bd.selectionner(conn=conn,id=id_pokemon)
-            return render_template("collection/ajout_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter  une carte", 
+            return render_template("collection/ajout_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter une carte", 
                 message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)
 
     with bd.creer_connexion() as conn:

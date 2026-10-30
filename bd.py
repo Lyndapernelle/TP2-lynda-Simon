@@ -62,26 +62,29 @@ def affiche_carte_accueil(conn):
                 pokemon = curseur.fetchall()
                 return pokemon
 
-def rechercher(conn, pNom,pNumero,pSuperType,pRarete):
+def rechercher(conn, pNom,pNumero,pType,pRarete, pSuperType):
       with conn.get_curseur() as curseur:
                 try:
-                    curseur.execute("select id, name, set_num, supertype, rarity from pokemon_card "+
+                    curseur.execute("select id, name, set_num, types, supertype ,rarity from pokemon_card "+
                     "where name like %(nom_pokemon)s and "+
                     "(set_num = %(numero)s or %(numero)s is null) and "+
-                    "(supertype = %(supertype)s or %(supertype)s = '') and "+
-                    "rarity like %(rarete_pokemon)s order by name "+
+                    "(types = %(type_pokemon)s or %(type_pokemon)s = '') and "+
+                    "rarity like %(rarete_pokemon)s and "+
+                    "supertype = %(supertype_pokemon)s order by name "+
                     "LIMIT 50",
                     {
                         'nom_pokemon':'%'+pNom+'%',
                         'numero' : pNumero,
-                        'supertype' : pSuperType,
-                        'rarete_pokemon' : '%'+pRarete+'%'
+                        'type_pokemon' : pType,
+                        'rarete_pokemon' : '%'+pRarete+'%',
+                        'supertype_pokemon' : pSuperType
                     }
-                    )
+                    )        
+             
                 except Exception:
                     abort(500,"Le serveur a rencontré une erreur.")
                 resultat = curseur.fetchall()
-                return resultat
+                return resultat     
 
 def afficher_detail(conn,id):
       with conn.get_curseur() as curseur:
@@ -116,7 +119,7 @@ def modifier(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
         except Exception:
             abort(500,"Le serveur a rencontré une erreur.")
 
-def selectionner(conn,id):
+def selectionner(conn, id):
     with conn.get_curseur() as curseur:
         curseur.execute("select * from pokemon_card where id = %(id_pokemon)s",
         {

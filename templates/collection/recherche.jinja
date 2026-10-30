@@ -5,11 +5,11 @@
         <form action="{{ url_for('collection.recherche') }}" method="GET" class="row align-items-center justify-content-center mt-4">
             <div class="col-md-4 ">
                 <div class="mb-4">
-                    <label for="nom_pokemon" class="form-label">Nom du Pokemon :</label>
+                    <label for="nom_pokemon" class="form-label">Nom de la carte :</label>
                     <input type="text" name="nom_pokemon" id="nom_pokemon" class="form-control w-75">
                 </div>
                 <div>
-                    <label for="numero" class="form-label">Numero du Pokemon :</label>
+                    <label for="numero" class="form-label">Numero de la carte :</label>
                     <input type="number" name="numero" id="numero" class="form-control w-75">
                 </div>
             </div>
@@ -23,12 +23,12 @@
                     </select>
                 </div>
                 <div>
-                    <label for="rarete" class="form-label">Rareté du pokemon :</label>
+                    <label for="rarete" class="form-label">Rareté de la carte :</label>
                     <input type="text" name="rarete" id="rarete" class="form-control w-75">
                 </div>
             </div>
             <div class="col-md-2 ms-3">
-                <button type="submit" class="btn btn-primary">Envoyer</button>
+                <button type="submit" class="btn btn-primary">Rechercher</button>
             </div>
         </form>
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
@@ -47,6 +47,8 @@
                         <ul class="list-group list-group-flush">            
                             {% if ligne["types"] is not none %}
                                 <li class="list-group-item">Type : {{ ligne["types"] | replace("[", "") | replace("]", "") | replace("'", "") }}</li>
+                            {% else %}
+                                <li class="list-group-item"> SuperType : {{ ligne["supertype"] }}</li>
                             {% endif %}
                             {% if ligne["set_num"] is not none %}
                                 <li class="list-group-item">Valeur : {{ ligne["set_num"] }}</li>
