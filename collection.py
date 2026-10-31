@@ -2,7 +2,7 @@
 Exercice de page de détails
 """
 
-from flask import Flask, render_template, request, redirect, abort, Blueprint
+from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for
 from flask.logging import create_logger
 import mysql.connector
 from mysql.connector import Error
@@ -13,7 +13,11 @@ from config import Config
 
 bp_collection= Blueprint('collection', __name__)
 
-
+@bp_collection.route("/page_collection", methods=["GET", "POST"])
+def page_de_collection():
+    with bd.creer_connexion() as conn:
+        pokemon = bd.affiche_carte_accueil(conn=conn)
+        return render_template("collection/page_collection.jinja", lesPokemons = pokemon)
 
 @bp_collection.route("/recherche",methods=["GET"])
 def recherche():
@@ -37,10 +41,16 @@ def recherche():
        resultat = bd.rechercher(conn=conn, pNom=pNom, pNumero=pNumero, pType=pType, pRarete=pRarete, pSuperType=pSuperType)
     return render_template("collection/recherche.jinja", lesPokemons = resultat, titre = "Recherche de pokemon")
 
-@bp_collection.route('/ajout_carte/<string:id_pokemon>', methods=["POST","GET"])
-def selectionner(id_pokemon):
-
-    nom_pokemon = request.args.get('nom', default= '').strip()
+@bp_collection.route('/ajout_carte/<string:id_pokemon>', methods=["GET"])
+def page_ajout(id_pokemon):
+      
+      with bd.creer_connexion() as conn:
+                 resultat=bd.selectionner(conn,id=id_pokemon)
+                 return render_template("collection/ajout_carte.jinja", ajouterPokemon = resultat, titre = "Page d'ajout des cartes")
+         
+@bp_collection.route('/ajout_carte/<string:pokemon_id>', methods=["POST"])
+def ajouter(pokemon_id):
+    
     condition_pokemon = request.args.get('condition', default='').strip()
     cout_pokemon = request.args.get('cout', type=int, default=0)
     statut_pokemon = request.args.get('statut', default='').strip()
@@ -49,31 +59,28 @@ def selectionner(id_pokemon):
     message_cout = ''
     message_statut = ''
 
-    if not id_pokemon:
+    valide = True
+        
+    if not pokemon_id:
         abort(404, "paramêtre 'id_pokemon' invalide")
-
-    invalide = False
-
+        
     if not valide_condition(condition_pokemon):
         message_condition = 'is-invalid'
-        invalide = True
+        valide = False
     if not (cout_pokemon >= 0):
         message_cout = 'is-invalid'
-        invalide = True
+        valide = False
     if not valide_statut(statut_pokemon):
         message_statut = 'is-invalid'
-        invalide = True
-
-
-    if(invalide):
+        valide = False
+               
+    if (valide):
         with bd.creer_connexion() as conn:
-            resultat=bd.selectionner(conn=conn,id=id_pokemon)
-            return render_template("collection/ajout_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter une carte", 
-                message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)
-
-    with bd.creer_connexion() as conn:
-       bd.ajouter(conn=conn,id=id_pokemon,condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon)
-    return redirect('/', code = 303)
+            bd.ajouter(conn=conn,id=pokemon_id,condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon)
+            return redirect(url_for('collection.page_de_collection',
+                            message_condition = message_condition, message_cout = message_cout, message_statut = message_statut),
+                            code=303)
+        
 
 @bp_collection.route('/modif_carte', methods=["POST"])
 def modifier_carte():
@@ -88,28 +95,27 @@ def modifier_carte():
     message_cout = ''
     message_statut = ''
 
-
-    invalide = False
+    valide = True
     
     if not valide_condition(condition_pokemon):
         message_condition = 'is-invalid'
-        invalide = True
+        valide = False
     if not (cout_pokemon >= 0):
         message_cout = 'is-invalid'
-        invalide = True
+        valide = False
     if not valide_statut(statut_pokemon):
         message_statut = 'is-invalid'
-        invalide = True
+        valide = False
 
-    if(invalide):
+    if(not valide):
         with bd.creer_connexion() as conn:
             resultat = bd.selectionner(conn=conn,id=id_pokemon)
             return render_template("collection/modif_carte.jinja", ajouterPokemon = resultat, titre = "Ajouter  une carte", 
                 message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)
 
     with bd.creer_connexion() as conn:
-        bd.modifier(conn,id,condition_pokemon,cout_pokemon,statut_pokemon)
-        return redirect('/', code = 303)
+        bd.modifier(conn,id_pokemon,condition_pokemon,cout_pokemon,statut_pokemon)
+        return redirect(url_for('collection.page_de_collection'), code = 303)
 
 
 @bp_collection.route('/detail', methods = ["GET","POST"])

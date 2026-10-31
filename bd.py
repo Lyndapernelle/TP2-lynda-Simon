@@ -101,7 +101,7 @@ def afficher_detail(conn,id):
                      resultat = curseur.fetchone()
                      return resultat
 
-def modifier(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
+def modifier(conn,id_pokemon,condition_pokemon,cout_pokemon,statut_pokemon):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute("UPDATE collection_items "
@@ -110,7 +110,7 @@ def modifier(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
             "`condition` = %(pokemon_condition)s " 
             "WHERE card_id = %(pokemon_id)s ",
             {
-                'pokemon_id' : id,
+                'pokemon_id' : id_pokemon,
                 'pokemon_condition' : condition_pokemon,
                 'pokemon_cout' : cout_pokemon,
                 'pokemon_status' : statut_pokemon

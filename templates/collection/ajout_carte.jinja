@@ -5,23 +5,23 @@
         <div class="col-md-4 mt-2">
             <img src="/static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.ajouter') }}">
+        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.ajouter', pokemon_id = ajouterPokemon.id)}}">
             <section class="fs-4">
                 <div class="mb-2">
                     <label class="form-label">Nom de la carte : </label>
-                    <input type="text" class="form-control w-50" name="nom_pokemon" value ="{{ ajouterPokemon["name"] }}"></input>
+                    <input type="text" class="form-control w-50" name="nom_pokemon" value ="{{ ajouterPokemon.name }}"></input>
                 </div>
                 <div class="mb-2">
                     <label class="form-label">Type : </label>
-                    <input type="text" class="form-control w-50" name="type_pokemon" value ="{{ ajouterPokemon["types"] | replace("[", "") | replace("]", "") | replace("'", "") }}"></input>
+                    <input type="text" class="form-control w-50" name="type_pokemon" value ="{{ ajouterPokemon.types | replace("[", "") | replace("]", "") | replace("'", "") }}"></input>
                 </div>
                 <div class="mb-2">
                     <label class="form-label">Valeur : </label>
-                    <input type="text" class="form-control w-50" name ="num_pokemon" value="{{ ajouterPokemon["set_num"] }}"></input>
+                    <input type="text" class="form-control w-50" name ="num_pokemon" value="{{ ajouterPokemon.set_num }}"></input>
                 </div>
                 <div class="mb-2">
                     <label class="form-label">Rareté : </label>
-                    <input type="text" class="form-control w-50" name="rarete_pokemon" value="{{ ajouterPokemon["rarity"] }}"></input>
+                    <input type="text" class="form-control w-50" name="rarete_pokemon" value="{{ ajouterPokemon.rarity }}"></input>
                 </div>
             </section>
             <section class="fs-4">
@@ -48,7 +48,7 @@
                 </div>
             </section>
             <div class="text-center">
-                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',id_pokemon=ajouterPokemon["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
+                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',pokemon_id=ajouterPokemon.id)}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
             </div>
         </form>
     </section>

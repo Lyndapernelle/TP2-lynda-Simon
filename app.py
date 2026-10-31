@@ -1,8 +1,4 @@
-"""
-Exercice de page de détails
-"""
-
-from flask import Flask, render_template, request, redirect, abort, url_for
+from flask import Flask, render_template
 from flask.logging import create_logger
 import mysql.connector
 from mysql.connector import Error
@@ -18,14 +14,9 @@ logger = create_logger(app)
 
 app.register_blueprint(bp_collection, url_prefix='/collection')
 
-
-
 @app.route("/")
 def index(): 
-    pokemon = []
-    with bd.creer_connexion() as conn:
-        pokemon= bd.affiche_carte_accueil(conn=conn)
-    return render_template("collection/index.jinja", lesPokemons = pokemon)        
+    return render_template("forum/index.jinja")  
 
 @app.errorhandler(400)
 def param_manquant(e):
@@ -52,5 +43,3 @@ def erreur_bd(e):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=config.APP_ENV.lower() == "local")
-
-index()

@@ -1,7 +1,8 @@
 {% extends "_base.jinja" %}
 
 {% block contenu %}
-    {%if lesPokemons|length == 0%}
+
+ {%if lesPokemons|length == 0%}
         <div class="text-center">
             <img src="static/image/iconeVide.png" alt= "Collection Vide" class="w-25"/>
             <p class ="fs-2 fw-bold mt-3"> La collection est vide 🥀</p>
@@ -43,4 +44,5 @@
             {%endfor%}
         </div>
     {% endif %}
+
 {% endblock %}
