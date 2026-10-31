@@ -62,7 +62,7 @@ def affiche_carte_accueil(conn):
                 pokemon = curseur.fetchall()
                 return pokemon
 
-def rechercher(conn, pNom,pNumero,pType,pRarete, pSuperType):
+def rechercher(conn, pNom, pNumero, pType, pRarete, pSuperType):
       with conn.get_curseur() as curseur:
                 try:
                     curseur.execute("select id, name, set_num, types, supertype ,rarity from pokemon_card "+

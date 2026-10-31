@@ -34,11 +34,11 @@ def recherche():
         abort(400," Paramètre 'rarete' invalide")
 
     with bd.creer_connexion() as conn:
-       resultat = bd.rechercher(conn=conn,pNom=pNom,pNumero=pNumero, pType=pType,pRarete=pRarete ,pSuperType=pSuperType)
+       resultat = bd.rechercher(conn=conn, pNom=pNom, pNumero=pNumero, pType=pType, pRarete=pRarete, pSuperType=pSuperType)
     return render_template("collection/recherche.jinja", lesPokemons = resultat, titre = "Recherche de pokemon")
 
 @bp_collection.route('/ajout_carte/<string:id_pokemon>', methods=["POST","GET"])
-def ajouter(id_pokemon):
+def selectionner(id_pokemon):
 
     nom_pokemon = request.args.get('nom', default= '').strip()
     condition_pokemon = request.args.get('condition', default='').strip()

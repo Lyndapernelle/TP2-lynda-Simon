@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-md-2 ms-3">
-                <button type="submit" class="btn btn-primary">Rechercher</button>
+                <button type="submit" class="btn btn-primary" url_for('collection.recherche')>Rechercher</button>
             </div>
         </form>
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
@@ -46,18 +46,18 @@
                         </div>
                         <ul class="list-group list-group-flush">            
                             {% if ligne["types"] is not none %}
-                                <li class="list-group-item">Type : {{ ligne["types"] | replace("[", "") | replace("]", "") | replace("'", "") }}</li>
+                                <li class="list-group-item">Type : {{ ligne.types | replace("[", "") | replace("]", "") | replace("'", "") }}</li>
                             {% else %}
-                                <li class="list-group-item"> SuperType : {{ ligne["supertype"] }}</li>
+                                <li class="list-group-item"> SuperType : {{ ligne.supertype }}</li>
                             {% endif %}
                             {% if ligne["set_num"] is not none %}
-                                <li class="list-group-item">Valeur : {{ ligne["set_num"] }}</li>
+                                <li class="list-group-item">Valeur : {{ ligne.set_num }}</li>
                             {% endif %}
                             {% if ligne["rarity"] is not none %}
-                                <li class="list-group-item">Rareté : {{ ligne["rarity"] }}</li>
+                                <li class="list-group-item">Rareté : {{ ligne.rarity }}</li>
                             {% endif %}
 
-                            <li class="list-group-item"> <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',id_pokemon=ligne["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button></li>
+                            <li class="list-group-item"> <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',id_pokemon=ligne.id)}}" class="text-white text-decoration-none">Ajouter à la collection</a></button></li>
                         </ul>
                         
                     </div>
