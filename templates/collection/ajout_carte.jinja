@@ -34,10 +34,12 @@
                         <option value="très usée"> très usée </option>
                         <option value="abîmée"> abîmée </option>
                     </select>
+                    <p class="is-invalide">{{message_condition}}</p>
                 </div>
                 <div class="mb-2">
                     <label class="form-label"> Coût de la carte : </label>
-                    <input type="number" class="form-control w-50" name="cout"></input>
+                    <input type="number" class="form-control w-50" name="cout">{{cout}}</input>
+                    <p class="is-invalide">{{message_cout}}</p>
                 </div>
                 <div class="mb-2">
                     <label class="form-label"> Statut de la carte : </label>
@@ -45,10 +47,11 @@
                         <option value="disponible">Disponible</option>
                         <option value="recherché">Recherché</option>
                     </select>
+                    <p class="is-invalide">{{message_statut}}</p>
                 </div>
             </section>
             <div class="text-center">
-                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',pokemon_id=ajouterPokemon.id)}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
+                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.ajouter',pokemon_id = ajouterPokemon.id)}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
             </div>
         </form>
     </section>
