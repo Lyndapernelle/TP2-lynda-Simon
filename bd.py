@@ -142,4 +142,4 @@ def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
                 }
             )
             except Exception:
-                abort(500,"Le serveur a rencontré une erreur.")
+                abort(500,"Le serveur a rencontré une erreur")
