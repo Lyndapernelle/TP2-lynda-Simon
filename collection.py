@@ -15,6 +15,7 @@ bp_collection= Blueprint('collection', __name__)
 
 @bp_collection.route('/page_collection', methods=["GET", "POST"])
 def page_de_collection():
+
     with bd.creer_connexion() as conn:
         pokemon = bd.affiche_carte_accueil(conn=conn)
         return render_template("collection/page_collection.jinja", lesPokemons = pokemon)
@@ -56,7 +57,6 @@ def ajouter(pokemon_id):
         
     if not pokemon_id:
         abort(404, "paramêtre 'pokemon_id' invalide")
-        
     if not valide_condition(condition_pokemon):
         message_condition = 'is-invalid'
         valide = False

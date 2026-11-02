@@ -1,0 +1,18 @@
+{% extends "_base.jinja" %}
+
+{% block contenu %}
+    <section>
+        <div>
+            <form method="POST" action="{{url_for('comptes.connexion', mdp_clair = mdp)}}">
+                <label class="form-label">Courriel :</label>
+                <input name="courriel_compte" class="form-control w-50 {% if erreur_courriel %}is-invalid{% endif %}"></input>
+
+                <label class="form-label">Mot de passe :</label>
+                <input name="mdp_compte" class="form-control w-50 {% if erreur_mdp %}is-invalid{% endif %}"></input>
+                <button type="submit" class="btn btn-primary text-white text-decoration-none">Se connecter</button>
+            </form>
+        </div>
+    </section>
+
+
+{% endblock %}

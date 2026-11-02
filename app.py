@@ -7,16 +7,18 @@ import re
 import html
 from config import Config
 from collection import bp_collection
+from comptes import bp_comptes
 
 config = Config()
 app = Flask(__name__)
 logger = create_logger(app)
 
 app.register_blueprint(bp_collection, url_prefix='/collection')
+app.register_blueprint(bp_comptes, url_prefix='/compte')
 
 @app.route("/")
 def index(): 
-    return render_template("forum/index.jinja")  
+    return render_template("menu/index.jinja")  
 
 @app.errorhandler(400)
 def param_manquant(e):
