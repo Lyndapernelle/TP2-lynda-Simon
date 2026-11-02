@@ -15,11 +15,14 @@
                 <li>Statut : {{lePokemon["status"]}} </li>
                 <li>Date d'obtention :{{lePokemon["added_date"]}} </li>
                 <li>Condition : {{lePokemon["condition"]}} </li>
+            </ul>
+             <form method="GET" class="mt-3" action="{{url_for('collection.modifier_carte',id_pokemon = lePokemon["id"])}}">
+                <button type="submit" class="btn btn-primary">Modifier la carte</button> 
+            </form>
         </div>
+
    </div>
-    <form method="GET" class="ms-5" action="{{url_for('collection.modifier_carte',id_pokemon = lePokemon["id"])}}">
-        <button type="submit" class="btn btn-primary">Modifier la carte</button> 
-    </form>
+   
    
 
 {% endblock %}
