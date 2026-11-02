@@ -3,7 +3,7 @@
 {% block contenu %}
     <section class="row justify-content-between">
         <div class="col-md-4 mt-2">
-            <img src="../static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
+            <img src="/static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
         </div>  
         <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.ajouter', pokemon_id = ajouterPokemon.id)}}">
             <section class="fs-4">
