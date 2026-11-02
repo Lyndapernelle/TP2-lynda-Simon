@@ -4,7 +4,7 @@
 
  {%if lesPokemons|length == 0%}
         <div class="text-center">
-            <img src="/static/image/iconeVide.png" alt= "Collection Vide" class="w-25"/>
+            <img src="../static/image/iconeVide.png" alt= "Collection Vide" class="w-25"/>
             <p class ="fs-2 fw-bold mt-3"> La collection est vide 🥀</p>
             <p class="fs-5 mt-4">Ajouter des cartes pour démarrer votre collection </p>
         </div>
@@ -12,7 +12,7 @@
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
             {%for ligne in lesPokemons %}
                 <div class="card" style="width: 15rem;">
-                    <img src="static/image/image.jpeg" class="card-img-top" alt="Image Pokemon">
+                    <img src="../static/image/image.jpeg" class="card-img-top" alt="Image Pokemon">
                     <div class="card-body">
                         <h5 class="card-title">{{ligne["name"]}}</h5>
                     </div>
