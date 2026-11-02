@@ -3,9 +3,9 @@
 {% block contenu %}
     <section class="row justify-content-between">
         <div class="col-md-4 mt-2">
-            <img src="static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
+            <img src="/static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.modifier_carte') }}">
+        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.modifier_carte',id_pokemon = ajouterPokemon.id) }}">
             <section class="fs-4">
                 <div class="mb-2">
                     <label class="form-label">Nom du Pokemon : </label>
@@ -34,17 +34,23 @@
                         <option value="très usée"> très usée </option>
                         <option value="abîmée"> abîmée </option>
                     </select>
+                    <p class="text-danger fs-5">{{message_condition}}</p>
                 </div>
                 <div class="mb-2">
                     <label class="form-label"> Coût de la carte : </label>
-                    <input type="number" class="form-control w-50" name="cout"></input>
+                    <input type="number" class="form-control w-50" name="cout" value="{{ cout }}" />
+                    <p class="text-danger fs-5">{{message_cout}}</p>
                 </div>
                 <div class="mb-2">
                     <label class="form-label"> Statut de la carte : </label>
-                    <input type="text" class="form-control w-50" name="statut"/>
+                    <select name="statut" id="statut-carte" class="form-select w-50"> 
+                        <option value="disponible">Disponible</option>
+                        <option value="recherchée">Recherchée</option>
+                    </select>
+                    <p class="text-danger fs-5">{{message_statut}}</p>
                 </div>
             </section>
-                <button type="submit" class="btn btn-primary"><a href="{{url_for('collection.modifier_carte',id_pokemon=ligne["id"])}}" class="text-white text-decoration-none">Ajouter à la collection</a></button>
+                <button type="submit" class="btn btn-primary">Ajouter à la collection</button>
         </form>
     </section>
    
