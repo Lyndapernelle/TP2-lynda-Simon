@@ -13,13 +13,13 @@ from config import Config
 
 bp_collection= Blueprint('collection', __name__)
 
-@bp_collection.route("/page_collection", methods=["GET", "POST"])
+@bp_collection.route('/page_collection', methods=["GET", "POST"])
 def page_de_collection():
     with bd.creer_connexion() as conn:
         pokemon = bd.affiche_carte_accueil(conn=conn)
         return render_template("collection/page_collection.jinja", lesPokemons = pokemon)
 
-@bp_collection.route("/recherche",methods=["GET"])
+@bp_collection.route('/recherche',methods=["GET"])
 def recherche():
     pNom = request.args.get('nom_pokemon', default='').strip()
     pNumero = request.args.get('numero',type=int)

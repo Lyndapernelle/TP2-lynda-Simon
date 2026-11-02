@@ -11,18 +11,21 @@
 
 <body>
     <header>
-        <h1><a href="/" class="text-decoration-none text-black fw-2">Pokémon TCG Collection</a></h1>
-            <nav class="navbar navbar-expand-lg">
-                <div id="navbarNav col-md-6 d-flex justify-content-end">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link btn btn-warning text-black fw-4" aria-current="page" href="{{url_for('collection.recherche')}}">Ajouter une carte</a>
-                            <a class="nav-link btn btn-warning text-black fw-4" aria-current="page" href="{{url_for('collection.page_de_collection')}}">Votre collection</a>
-                        </li>
-                    </ul>
+        <nav class="navbar navbar-expand-lg py-4" style="background-color:#0b367e;">
+            <div class="container">
+                <a class="navbar-brand text-white fw-bold fs-1" href="/">
+                    Pokémon TCG Collection
+                </a>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-warning rounded-pill px-4" href="/collection/recherche">
+                        Ajouter une carte
+                    </a>
+                    <a class="btn btn-warning rounded-pill px-4" href="/collection/page_collection">
+                        Votre collection
+                    </a>
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     </header>
     <main class="bg-white container mt-5">
         <h2 class="d-flex justify-content-center mb-3">{{ titre | default("Accueil") }} | Pokémon TCG Collection</h2>
