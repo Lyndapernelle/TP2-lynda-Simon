@@ -12,6 +12,7 @@ from comptes import bp_comptes
 config = Config()
 app = Flask(__name__)
 logger = create_logger(app)
+app.secret_key = "f78bde7e6d92cfdf4d58392353e16032bb79417924d30ad7b6c733f00131ca71"
 
 app.register_blueprint(bp_collection, url_prefix='/collection')
 app.register_blueprint(bp_comptes, url_prefix='/compte')
