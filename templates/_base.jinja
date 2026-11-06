@@ -25,13 +25,25 @@
                     </a>
                     <a class="btn btn-warning rounded-pill px-4" href="/compte/connexion">
                         Se connecter
-                    </a>           
+                    </a>    
+                     <a class="btn btn-warning rounded-pill px-4" href="/compte/creer">
+                        Créer un compte
+                    </a>        
                 </div>
             </div>
         </nav>
     </header>
     <main class="bg-white container mt-5">
         <h2 class="d-flex justify-content-center mb-3">{{ titre | default("Accueil") }} | Pokémon TCG Collection</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}  
+                {% for category, message in messages %}
+                    <div class="{{ category }}">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
         {% block contenu %}
             <p>Voici une valeur par défaut</p>

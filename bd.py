@@ -7,7 +7,7 @@ import contextlib
 import mysql.connector
 from config import Config
 from flask import abort
-
+from flask import flash
 config = Config
 
 
@@ -145,13 +145,23 @@ def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
                 abort(500,"Le serveur a rencontré une erreur")
 
 def trouver_utilisateur(conn, courriel_utilisateur):
-     with conn.get_curseur() as curseur:
-            try:
-               curseur.execute("SELECT * from collectionneurs " 
-               "where courriel = %(courriel)s",
-                {
-                    'courriel' : courriel_utilisateur  
-                }
-            )
-            except Exception :
-                abort(500,"Le serveur a rencontré une erreur")
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("SELECT * from collectionneurs " 
+            "where courriel = %(courriel)s",
+            {
+                'courriel' : courriel_utilisateur  
+            }
+        )
+        except Exception :
+            abort(500,"Le serveur a rencontré une erreur")
+
+def creer_compte(conn,courriel,mdp_hash):
+    with conn.get_curseur() as curseur:
+        curseur.execute("INSERT INTO collectionneurs (`courriel`,`mot_de_passe`,`credit`)"
+        "VALUES(%(courriel)s, %(mdp_hash)s, 100)",
+        {
+            'courriel': courriel,
+            'mdp_hash': mdp_hash
+        })
+            
