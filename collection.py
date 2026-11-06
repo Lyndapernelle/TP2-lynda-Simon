@@ -2,7 +2,7 @@
 Exercice de page de détails
 """
 
-from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for
+from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for, session
 from flask.logging import create_logger
 import mysql.connector
 from mysql.connector import Error
