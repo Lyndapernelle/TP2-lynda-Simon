@@ -4,7 +4,6 @@
     <section>
         <div class = "row justify-content-center">
             <form method="POST" action="{{url_for('comptes.creer')}}" class="col-6 border border-primary border-2 rounded-4 p-4 mt-4">
-
                 <div class="mt-3">
                     <label class="form-label">Courriel :</label>
                     <input name="courriel" class="form-control {% if erreur_courriel %}is-invalid{% endif %}" value="{{courriel}}"/>

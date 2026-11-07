@@ -144,17 +144,17 @@ def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
             except Exception:
                 abort(500,"Le serveur a rencontré une erreur")
 
-def trouver_utilisateur(conn, courriel_utilisateur):
+def trouver_utilisateur(conn,courriel,mdp_hash):
     with conn.get_curseur() as curseur:
-        try:
-            curseur.execute("SELECT * from collectionneurs " 
-            "where courriel = %(courriel)s",
-            {
-                'courriel' : courriel_utilisateur  
-            }
+        curseur.execute("SELECT * from collectionneurs " 
+        "WHERE courriel = %(courriel)s "
+        "AND mot_de_passe = %(mdp_hash)s",
+        {
+            'courriel' : courriel, 
+            'mdp_hash' : mdp_hash
+        }
         )
-        except Exception :
-            abort(500,"Le serveur a rencontré une erreur")
+        return curseur.fetchone()
 
 def creer_compte(conn,courriel,mdp_hash):
     with conn.get_curseur() as curseur:
