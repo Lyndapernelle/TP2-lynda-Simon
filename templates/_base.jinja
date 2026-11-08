@@ -18,17 +18,22 @@
                 </a>
                 <div class="d-flex gap-2">
                     <a class="btn btn-warning rounded-pill px-4" href="/collection/recherche">
-                        Ajouter une carte
+                            Ajouter une carte
                     </a>
                     <a class="btn btn-warning rounded-pill px-4" href="/collection/page_collection">
-                        Votre collection
+                            Votre collection
                     </a>
                     <a class="btn btn-warning rounded-pill px-4" href="/compte/connexion">
-                        Se connecter
+                            Se connecter
                     </a>    
                      <a class="btn btn-warning rounded-pill px-4" href="/compte/creer">
-                        Créer un compte
-                    </a>        
+                            Créer un compte
+                    </a> 
+                    {% if 'courriel' in session %}  
+                        <a class="btn btn-warning rounded-pill px-4" href="/detruire_session">
+                            Se déconnecter
+                        </a>
+                    {% endif %}     
                 </div>
             </div>
         </nav>

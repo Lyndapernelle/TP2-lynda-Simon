@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for,session
+from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for, session
 from flask.logging import create_logger
 from flask import flash
 import mysql.connector
@@ -30,7 +30,7 @@ def connexion():
         msg_compte_inexistant = ''
         message_mdp_regex = ''
         message_courriel_regex = ''
-        
+
         if (not courriel_utilisateur or not mdp_clair or not courriel_regex.match(courriel_utilisateur) or not mdp_regex.match(mdp_clair)):
             if (not courriel_utilisateur):
                 valide_courriel = True
@@ -64,11 +64,14 @@ def connexion():
                                                 msg_courriel_regex = message_courriel_regex, msg_mdp_regex = message_mdp_regex
                                             )
                     else:
-                        return redirect("/", code=303)
-            except Exception :
+                        session['courriel'] = courriel_utilisateur
+                        flash('Connexion au compte effectué avec succès','succes')
+                        return redirect("/", code=303)              
+            except Exception:
                 flash('Le recherche de compte à échoué','erreur')
                 abort(500,"Le serveur a rencontré une erreur")
 
+@bp_comptes.route('/')
        
 @bp_comptes.route('/creer', methods=["POST", "GET"])
 def creer():
@@ -122,12 +125,6 @@ def creer():
                     else:
                         flash('La compte existe déja','erreur')
                         abort(500,"Le serveur a rencontré une erreur")
-
-
-
-
-
-
 
 def hasher_mdp(mdp_clair):
     return hashlib.sha512(mdp_clair.encode()).hexdigest()
