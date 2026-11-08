@@ -16,22 +16,27 @@
                 <a class="navbar-brand text-white fw-bold fs-1" href="/">
                     Pokémon TCG Collection
                 </a>
-                <div class="d-flex gap-1">
-                    <a class="btn btn-warning rounded-pill px-3" href="/collection/recherche">
-                        Ajouter une carte
+                <div class="d-flex gap-2">
+                    <a class="btn btn-warning rounded-pill px-4" href="/collection/recherche">
+                            Ajouter une carte
                     </a>
-                    <a class="btn btn-warning rounded-pill px-3" href="/collection/page_collection">
-                        Votre collection
+                    <a class="btn btn-warning rounded-pill px-4" href="/collection/page_collection">
+                            Votre collection
                     </a>
-                    <a class="btn btn-warning rounded-pill px-3" href="/compte/connexion">
-                        Se connecter
-                    </a>    
-                    <a class="btn btn-warning rounded-pill px-3" href="/compte/creer">
-                        Créer un compte
-                    </a> 
-                    <a class="btn btn-warning rounded-pill px-3" href="/compte/liste_utilisateur">
+                     <a class="btn btn-warning rounded-pill px-3" href="/compte/liste_utilisateur">
                         Liste des utilisateurs
-                    </a>        
+                    </a> 
+                    <a class="btn btn-warning rounded-pill px-4" href="/compte/connexion">
+                            Se connecter
+                    </a>    
+                     <a class="btn btn-warning rounded-pill px-4" href="/compte/creer">
+                            Créer un compte
+                    </a> 
+                    {% if 'courriel' in session %}  
+                        <a class="btn btn-warning rounded-pill px-4" href="/detruire_session">
+                            Se déconnecter
+                        </a>
+                    {% endif %}     
                 </div>
             </div>
         </nav>

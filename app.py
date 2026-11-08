@@ -1,9 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, flash, redirect
 from flask.logging import create_logger
 import mysql.connector
 from mysql.connector import Error
 import bd
 import re
+import os
 import html
 from config import Config
 from collection import bp_collection
@@ -12,15 +13,27 @@ from comptes import bp_comptes
 config = Config()
 app = Flask(__name__)
 logger = create_logger(app)
-app.secret_key = "f78bde7e6d92cfdf4d58392353e16032bb79417924d30ad7b6c733f00131ca71"
+
+app.secret_key = os.getenv('secret_key')
 
 app.register_blueprint(bp_collection, url_prefix='/collection')
 app.register_blueprint(bp_comptes, url_prefix='/compte')
 
-@app.route("/")
-def index(): 
-    return render_template("menu/index.jinja")  
+@app.route('/')
+def index():
+    if 'courriel' in session:
+        session.permanent = True
+        return render_template('menu/index.jinja')
+    else: 
+        flash('Veuillez vous connecter','erreur')
+        return render_template('menu/index.jinja')
 
+@app.route('/_base')
+def detruire_session():
+    session.clear()
+    flash('Déconnexion du compte effectué avec succes','succes')
+    return redirect('/', code=303)
+    
 @app.errorhandler(400)
 def param_manquant(e):
     logger.exception(e)

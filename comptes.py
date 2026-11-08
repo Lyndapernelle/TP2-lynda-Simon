@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for,session
+from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for, session
 from flask.logging import create_logger
 from flask import flash
 import mysql.connector
@@ -15,29 +15,64 @@ bp_comptes = Blueprint('comptes', __name__)
 @bp_comptes.route('/connexion', methods=["POST", "GET"])
 def connexion():
     if request.method == "GET":
-        return render_template("compte/connexion.jinja", titre="Retour vers la page de connexion")
+        return render_template('compte/connexion.jinja', titre="Retour vers la page de connexion")
     if request.method == "POST":
 
-        bool_mdp = False
-        bool_courriel = False
-        courriel_utilisateur = request.form.get('courriel_compte', default='')
-        mdp_clair = request.form.get('mdp_compte').strip()
-
+        valide_mdp = False
+        valide_courriel = False
+        courriel_utilisateur = request.form.get('courriel', default='').strip()
+        mdp_clair = request.form.get('mdp').strip()
         courriel_regex = re.compile('^[\w.]+@[\w.]+\.[a-zA-Z]{2,}$')
         mdp_regex = re.compile('^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$')
 
-    if ((not courriel_regex.match(courriel_utilisateur)) or (not mdp_regex.match(mdp_clair))):
-            if (not courriel_regex.match(courriel_utilisateur)):
-                bool_courriel = True
-            if (not mdp_regex.match(mdp_clair)):
-                bool_mdp = True
-            return render_template("compte/connexion.jinja", erreur_mdp = bool_mdp, erreur_courriel = bool_courriel)
-    else:
-        with bd.creer_connexion() as conn:
-            utilisateur = bd.trouver_utilisateur(conn, courriel_utilisateur) 
-            return render_template("menu/index.jinja", information_compte = utilisateur)
+        message_courriel_vide = ''
+        message_mdp_vide = ''
+        msg_compte_inexistant = ''
+        message_mdp_regex = ''
+        message_courriel_regex = ''
 
-            
+        if (not courriel_utilisateur or not mdp_clair or not courriel_regex.match(courriel_utilisateur) or not mdp_regex.match(mdp_clair)):
+            if (not courriel_utilisateur):
+                valide_courriel = True
+                message_courriel_vide = "Veuillez entrer un courriel"
+            elif (not courriel_regex.match(courriel_utilisateur)):
+                    valide_courriel = True
+                    message_courriel_regex = 'Le courriel doit ressembler à ceci : nom@domaine.com'
+            if (not mdp_clair):
+                valide_mdp = True
+                message_mdp_vide = "Veuillez entrer un mot de passe"  
+            elif (not mdp_regex.match(mdp_clair)):
+                valide_mdp = True
+                message_mdp_regex = "Ce mot de passe de correspond pas à nos exigences"
+            return render_template('compte/connexion.jinja', erreur_mdp = valide_mdp, erreur_courriel = valide_courriel, 
+                                    courriel = courriel_utilisateur, msg_inexistant = msg_compte_inexistant,
+                                    msg_courriel_vide = message_courriel_vide, msg_mdp_vide = message_mdp_vide,
+                                    msg_courriel_regex = message_courriel_regex, msg_mdp_regex = message_mdp_regex
+                                )
+        else:  
+            mdp_hash = hasher_mdp(mdp_clair)
+            try:
+                with bd.creer_connexion() as conn:
+                    info = bd.trouver_utilisateur(conn = conn, courriel = courriel_utilisateur, mdp_hash = mdp_hash)
+                    if (info is None):
+                        valide_mdp = True
+                        valide_courriel = True
+                        msg_compte_inexistant = 'Le courriel ou le mot de passe est incorrect, veuillez réessayer'
+                        return render_template('compte/connexion.jinja', erreur_mdp = valide_mdp, erreur_courriel = valide_courriel, 
+                                                courriel = courriel_utilisateur, msg_inexistant = msg_compte_inexistant,
+                                                msg_courriel_vide = message_courriel_vide, msg_mdp_vide = message_mdp_vide,
+                                                msg_courriel_regex = message_courriel_regex, msg_mdp_regex = message_mdp_regex
+                                            )
+                    else:
+                        session['courriel'] = courriel_utilisateur
+                        flash('Connexion au compte effectué avec succès','succes')
+                        return redirect("/", code=303)              
+            except Exception:
+                flash('Le recherche de compte à échoué','erreur')
+                abort(500,"Le serveur a rencontré une erreur")
+
+@bp_comptes.route('/')
+       
 @bp_comptes.route('/creer', methods=["POST", "GET"])
 def creer():
     if request.method == "GET":
@@ -50,13 +85,15 @@ def creer():
         regex_caractere_invalide = re.compile('<(.*)>.*?|<(.*) />')
         regex_courriel = re.compile('^[\w.]+@[\w.]+\.[a-zA-Z]{2,}$')
         regex_mdp = re.compile('^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$')
-        valide = True
+        valide_mdp = False
+        valide_conf_mdp = False
+        valide_courriel = False
         erreur_courriel = ''
         erreur_mdp=''
         erreur_conf_mdp=''
 
         if not courriel or not regex_courriel.match(courriel) or regex_caractere_invalide.match(courriel): 
-            valide = False
+            valide_courriel = True
             erreur_courriel = 'Courriel Invalide'
         else:
             with bd.creer_connexion() as conn:
@@ -64,7 +101,7 @@ def creer():
                     erreur_courriel = 'Ce courriel est déjà utilisé'
                     valide = False
         if not mdp or not regex_mdp.match(mdp) or regex_caractere_invalide.match(mdp):
-            valide = False
+            valide_mdp = True
             erreur_mdp = 'Le mot de passe est Invalide. Il doit contenir au moins 8 caractères, une lettre majuscule,' \
             ' une lettre minusucule, un chiffre'
         if not valide:
@@ -72,6 +109,7 @@ def creer():
                                    courriel = courriel, titre = 'Création de compte')
         else:
             if not (mdp == conf_mdp):
+                valide_conf_mdp = True
                 erreur_conf_mdp = 'Les mots de passe doivent être identiques'
                 return render_template('compte/creer_compte.jinja',message_courriel= erreur_courriel, message_mdp= erreur_mdp, message_conf_mdp = erreur_conf_mdp,
                                                    courriel = courriel, titre = 'Création de compte')
