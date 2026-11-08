@@ -17,26 +17,30 @@
                     Pokémon TCG Collection
                 </a>
                 <div class="d-flex gap-2">
-                    <a class="btn btn-warning rounded-pill px-4" href="/collection/recherche">
-                            Ajouter une carte
-                    </a>
-                    <a class="btn btn-warning rounded-pill px-4" href="/collection/page_collection">
+                      
+                    {% if 'courriel' in session%}      
+                        <a class="btn btn-warning rounded-pill px-3" href="/collection/recherche">
+                                Ajouter une carte
+                        </a>
+                        <a class="btn btn-warning rounded-pill px-3" href="/collection/page_collection">
                             Votre collection
-                    </a>
-                     <a class="btn btn-warning rounded-pill px-3" href="/compte/liste_utilisateur">
-                        Liste des utilisateurs
-                    </a> 
-                    <a class="btn btn-warning rounded-pill px-4" href="/compte/connexion">
-                            Se connecter
-                    </a>    
-                     <a class="btn btn-warning rounded-pill px-4" href="/compte/creer">
-                            Créer un compte
-                    </a> 
-                    {% if 'courriel' in session %}  
-                        <a class="btn btn-warning rounded-pill px-4" href="/detruire_session">
+                        </a>
+                        <a class="btn btn-warning rounded-pill px-3" href="/Deconnecter">
                             Se déconnecter
                         </a>
-                    {% endif %}     
+                        {%if session['courriel'] == 'admin@garneau.ca'  %}
+                            <a class="btn btn-warning rounded-pill px-3" href="/compte/liste_utilisateur">
+                                Liste des utilisateurs
+                            </a>
+                            <a class="btn btn-warning rounded-pill px-3" href="/compte/creer">
+                                Créer un compte
+                            </a>
+                        {%endif%}
+                    {% else %}   
+                        <a class="btn btn-warning rounded-pill px-3" href="/compte/connexion">
+                            Se connecter
+                        </a>  
+                    {%endif%} 
                 </div>
             </div>
         </nav>

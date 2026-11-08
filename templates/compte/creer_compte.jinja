@@ -6,17 +6,17 @@
             <form method="POST" action="{{url_for('comptes.creer')}}" class="col-6 border border-primary border-2 rounded-4 p-4 mt-4">
                 <div class="mt-3">
                     <label class="form-label">Courriel :</label>
-                    <input name="courriel" class="form-control {% if erreur_courriel %}is-invalid{% endif %}" value="{{courriel}}"/>
+                    <input name="courriel" class="form-control {% if message_courriel %}is-invalid{% endif %}" value="{{courriel}}"/>
                     <p class="text-danger">{{message_courriel}}</p>
                 </div>
                 <div class="mt-3">
                     <label class="form-label mt-3">Mot de passe :</label>
-                    <input type="password" name="mdp" class="form-control {% if erreur_mdp %}is-invalid{% endif %}"></input>
+                    <input type="password" name="mdp" class="form-control {% if message_mdp %}is-invalid{% endif %}"/>
                     <p class="text-danger">{{message_mdp}}</p>
                 </div>
                 <div class="mt-3">
                     <label class="form-label mt-3">Confirmer le mot de passe :</label>
-                    <input type="password" name="conf_mdp" class="form-control {% if erreur_conf_mdp %}is-invalid{% endif %}"></input>
+                    <input type="password" name="conf_mdp" class="form-control {% if message_conf_mdp %}is-invalid{% endif %}"/>
                     <p class="text-danger">{{message_conf_mdp}}</p>
                 </div>
                 <div class="text-center">

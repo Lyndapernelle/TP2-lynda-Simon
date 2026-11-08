@@ -45,18 +45,19 @@ def get_curseur(self):
     finally:
         curseur.close()
 
-def affiche_carte_accueil(conn):
+def affiche_carte_accueil(conn,id_collectionneur):
     with conn.get_curseur() as curseur:
                 try:
                     curseur.execute(
-                        "select ci.id, ci.condition, ci.cost, ci.status, " +
-                        "pc.name, pc.set_num, pc.types, pc.rarity " +
-                        "FROM collection_items ci " +
-                        "JOIN pokemon_card pc ON pc.id = ci.card_id " +
-                        "WHERE ci.status like 'disponible' " +
-                        "ORDER BY ci.added_date DESC " +
-                        "limit 5"
-                    )
+                "SELECT ci.id, ci.`condition`, ci.cost, ci.status, pc.name, pc.set_num, pc.types, pc.rarity "
+                "FROM collection_items ci "
+                "JOIN pokemon_card pc ON pc.id = ci.card_id "
+                "WHERE ci.id_collectionneur = %(id_collectionneur)s "
+                "ORDER BY ci.added_date DESC",
+                {
+                    'id_collectionneur': id_collectionneur
+                }
+                )
                 except Exception:
                     abort(500,"Le serveur a rencontré une erreur.")
                 pokemon = curseur.fetchall()
@@ -129,12 +130,13 @@ def selectionner(conn, id):
         resultat = curseur.fetchone()
         return resultat
 
-def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
+def ajouter(conn,id,id_collectionneur,condition_pokemon,cout_pokemon,statut_pokemon):
        with conn.get_curseur() as curseur:
             try:
                 curseur.execute("INSERT INTO collection_items (`id_collectionneur`,`card_id`, `condition`, `cost`, `status`) "
-                "VALUES(2,%(card_id)s, %(condition)s, %(cout)s, %(status)s)",
+                "VALUES(%(id_collectionneur)s,%(card_id)s, %(condition)s, %(cout)s, %(status)s)",
                 {
+                    'id_collectionneur': id_collectionneur,
                     'card_id' : id,
                     'condition' : condition_pokemon,
                     'cout' : cout_pokemon,
@@ -156,6 +158,18 @@ def trouver_utilisateur(conn,courriel,mdp_hash):
         )
         return curseur.fetchone()
 
+def trouver_courriel(conn,courriel_utilisateur):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("SELECT * from collectionneurs " 
+            "where courriel = %(courriel)s",
+            {
+                'courriel' : courriel_utilisateur  
+            }
+            )
+            return curseur.fetchone()
+        except Exception :
+            abort(500,"Le serveur a rencontré une erreur")
 def creer_compte(conn,courriel,mdp_hash):
     with conn.get_curseur() as curseur:
         curseur.execute("INSERT INTO collectionneurs (`courriel`,`mot_de_passe`,`credit`)"

@@ -17,7 +17,7 @@ bp_collection= Blueprint('collection', __name__)
 def page_de_collection():
 
     with bd.creer_connexion() as conn:
-        pokemon = bd.affiche_carte_accueil(conn=conn)
+        pokemon = bd.affiche_carte_accueil(conn=conn,id_collectionneur = session['id'])
         return render_template("collection/page_collection.jinja", lesPokemons = pokemon)
 
 @bp_collection.route('/recherche',methods=["GET"])
@@ -79,7 +79,7 @@ def ajouter(pokemon_id):
                 return render_template('collection/ajout_carte.jinja', ajouterPokemon = resultat, cout = cout_pokemon,
                 message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)    
         with bd.creer_connexion() as conn:
-            bd.ajouter(conn=conn,id=pokemon_id,condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon)
+            bd.ajouter(conn=conn,id=pokemon_id,id_collectionneur=session['id'],condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon)
             return redirect(url_for('collection.page_de_collection'),
                                         code=303)
     
