@@ -42,7 +42,7 @@ def connexion():
 def creer():
     if request.method == "GET":
         return render_template('compte/creer_compte.jinja',message_courriel= '', message_mdp= '', message_conf_mdp = '',
-                                   courriel = '')
+                                   courriel = '', titre = 'Création de compte')
     elif request.method == "POST":
         courriel = request.form.get("courriel", default='').strip()
         mdp = request.form.get("mdp",default='').strip()
@@ -58,18 +58,23 @@ def creer():
         if not courriel or not regex_courriel.match(courriel) or regex_caractere_invalide.match(courriel): 
             valide = False
             erreur_courriel = 'Courriel Invalide'
+        else:
+            with bd.creer_connexion() as conn:
+                if bd.trouver_utilisateur(conn=conn,courriel_utilisateur=courriel) is not None:
+                    erreur_courriel = 'Ce courriel est déjà utilisé'
+                    valide = False
         if not mdp or not regex_mdp.match(mdp) or regex_caractere_invalide.match(mdp):
             valide = False
             erreur_mdp = 'Le mot de passe est Invalide. Il doit contenir au moins 8 caractères, une lettre majuscule,' \
-            ' une lettre majuscule, un chiffre'
+            ' une lettre minusucule, un chiffre'
         if not valide:
             return render_template('compte/creer_compte.jinja',message_courriel= erreur_courriel, message_mdp= erreur_mdp, message_conf_mdp = '',
-                                   courriel = courriel)
+                                   courriel = courriel, titre = 'Création de compte')
         else:
             if not (mdp == conf_mdp):
                 erreur_conf_mdp = 'Les mots de passe doivent être identiques'
                 return render_template('compte/creer_compte.jinja',message_courriel= erreur_courriel, message_mdp= erreur_mdp, message_conf_mdp = erreur_conf_mdp,
-                                                   courriel = courriel)
+                                                   courriel = courriel, titre = 'Création de compte')
             else:
                 mdp_hash = hasher_mdp(mdp)
                 try:
@@ -80,9 +85,22 @@ def creer():
                 except Exception :
                                 flash('La création de compte a échoué','erreur')
                                 abort(500,"Le serveur a rencontré une erreur")
-            
+           
+@bp_comptes.route('/liste_utilisateur')
+def lister_utilisateur():
+    with bd.creer_connexion() as conn:
+        resultat = bd.lister_utilisateur(conn=conn)
+        return render_template('compte/liste_utilisateur.jinja',resultat = resultat, titre = 'Utilisateurs')
 
-
+@bp_comptes.route('/liste_utilisateur/<courriel>',methods=["GET"])
+def detail_utilisateur(courriel):
+    if not courriel:
+        abort(400,"  Courriel manquant") 
+    else:
+        with bd.creer_connexion() as conn:
+            credit= bd.obtenir_credit(conn=conn,courriel=courriel)
+            cartes = bd.cartes_utilisateur(conn=conn,courriel=courriel)
+            return render_template('compte/detail_utilisateur.jinja',cartes = cartes, courriel = courriel, credit = credit, titre= 'Information du compte')
 
 
 

@@ -132,8 +132,8 @@ def selectionner(conn, id):
 def ajouter(conn,id,condition_pokemon,cout_pokemon,statut_pokemon):
        with conn.get_curseur() as curseur:
             try:
-                curseur.execute("INSERT INTO collection_items (`card_id`, `condition`, `cost`, `status`) "
-                "VALUES(%(card_id)s, %(condition)s, %(cout)s, %(status)s)",
+                curseur.execute("INSERT INTO collection_items (`id_collectionneur`,`card_id`, `condition`, `cost`, `status`) "
+                "VALUES(2,%(card_id)s, %(condition)s, %(cout)s, %(status)s)",
                 {
                     'card_id' : id,
                     'condition' : condition_pokemon,
@@ -152,7 +152,8 @@ def trouver_utilisateur(conn, courriel_utilisateur):
             {
                 'courriel' : courriel_utilisateur  
             }
-        )
+            )
+            return curseur.fetchone()
         except Exception :
             abort(500,"Le serveur a rencontré une erreur")
 
@@ -164,4 +165,41 @@ def creer_compte(conn,courriel,mdp_hash):
             'courriel': courriel,
             'mdp_hash': mdp_hash
         })
-            
+
+def lister_utilisateur(conn):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("SELECT * from collectionneurs ")
+            pokemon = curseur.fetchall()
+            return pokemon
+        except Exception :
+            abort(500,"Le serveur a rencontré une erreur")
+
+def cartes_utilisateur(conn,courriel):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, "
+            "pc.name, pc.set_num, pc.types, pc.rarity "
+            "FROM collection_items ci "
+            "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
+            "JOIN pokemon_card pc ON pc.id = ci.card_id "
+            "WHERE c.courriel = %(courriel)s ORDER BY ci.added_date DESC",
+            {
+                'courriel': courriel
+            }
+            )
+            informations = curseur.fetchall()
+            return informations
+        except Exception :
+            abort(500,"Le serveur a rencontré une erreur")
+
+def obtenir_credit(conn, courriel):
+    with conn.cursor() as curseur:
+        curseur.execute(
+            "SELECT credit FROM collectionneurs WHERE courriel = %(courriel)s",
+            {
+                'courriel': courriel
+            }
+        )
+        resultat = curseur.fetchone()
+        return resultat[0]

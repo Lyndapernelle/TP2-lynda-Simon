@@ -1,0 +1,26 @@
+{% extends "_base.jinja" %}
+
+{% block contenu %}
+
+ {%if resultat|length == 0%}
+        <div class="text-center">
+            <img src="../static/image/iconeVide.png" alt= "Collection Vide" class="w-25"/>
+            <p class ="fs-2 fw-bold mt-3"> Aucun utilisateur 🥀</p>
+        </div>
+    {% else %}
+        <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
+            {%for ligne in resultat %}
+                <div class="card" style="width: 15rem;">
+                    <img src="../static/image/image_utilisateur.png" class="card-img-top" alt="Image Utilisateur">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ligne["courriel"]}}</h5>
+                    </div>
+                    <form method="GET" action="{{url_for('comptes.detail_utilisateur', courriel = ligne["courriel"])}}">
+                        <button type="submit" class="btn btn-primary m-3">Afficher les informations</button>
+                    </form>
+                </div>
+            {%endfor%}
+        </div>
+    {% endif %}
+
+{% endblock %}
