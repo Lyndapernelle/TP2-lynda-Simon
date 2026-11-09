@@ -1,5 +1,42 @@
 {% extends "_base.jinja" %}
 
 {% block contenu %}
-    Page de forum a faire
+    {% if not 'courriel' in session%} 
+        <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
+            {%for ligne in lesPokemons %}
+                <div class="card" style="width: 15rem;">
+                    <img src="../static/image/image.jpeg" class="card-img-top" alt="Image Pokemon">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ligne["name"]}}</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">            
+                        {% if ligne["types"] is not none %}
+                            <li class="list-group-item">Type : {{ ligne["types"] | replace("[", "") | replace("]", "") | replace("'", "") }}</li>
+                        {% endif %}
+                        {% if ligne["set_num"] is not none %}
+                            <li class="list-group-item">Valeur : {{ ligne["set_num"] }}</li>
+                        {% endif %}
+                        {% if ligne["rarity"] is not none %}
+                            <li class="list-group-item">Rareté : {{ ligne["rarity"] }}</li>
+                        {% endif %}
+                        {% if ligne["condition"] is not none %}
+                            <li class="list-group-item"> Condition : {{ ligne["condition"] }}</li>
+                        {% endif%}                        
+                        {% if ligne["cost"] is not none %}
+                            <li class="list-group-item"> Coût : {{ ligne["cost"] }} </li>
+                        {% endif %}
+                        {% if ligne["status"] is not none %}
+                            <li class="list-group-item"> Status : {{ ligne["status"] }} </li>
+                        {% endif %}
+                        <form method="POST" action="{{ url_for('collection.afficher_detail') }}">
+                            <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
+                            <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
+                        </form>
+                    </ul>
+                </div>
+            {%endfor%}
+        </div>
+    {%else%}
+        <h2 class="text-center">Heureux de vous retrouver !!</h2>
+    {%endif%}
 {% endblock %}

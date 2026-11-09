@@ -76,6 +76,10 @@ def connexion():
        
 @bp_comptes.route('/creer', methods=["POST", "GET"])
 def creer():
+    if not 'courriel' in session:
+        abort(401,"")
+    elif session['courriel'] != 'admin@garneau.ca':
+        abort(403,"")
     if request.method == "GET":
         return render_template('compte/creer_compte.jinja',message_courriel= '', message_mdp= '', message_conf_mdp = '',
                                    courriel = '')
@@ -127,6 +131,10 @@ def creer():
                                                            courriel = courriel)
 @bp_comptes.route('/liste_utilisateur')
 def lister_utilisateur():
+    if not 'courriel' in session:
+        abort(401,"")
+    elif session['courriel'] != 'admin@garneau.ca':
+        abort(403,"")
     with bd.creer_connexion() as conn:
         resultat = bd.lister_utilisateur(conn=conn)
         return render_template('compte/liste_utilisateur.jinja',resultat = resultat, titre = 'Utilisateurs')

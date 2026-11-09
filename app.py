@@ -23,10 +23,11 @@ app.register_blueprint(bp_comptes, url_prefix='/compte')
 def index():
     if 'courriel' in session:
         session.permanent = True
-        return render_template('menu/index.jinja')
     else: 
         flash('Veuillez vous connecter','erreur')
-        return render_template('menu/index.jinja')
+    with bd.creer_connexion() as conn:
+        pokemon = bd.accueil_invite(conn=conn)
+        return render_template("menu/index.jinja", lesPokemons = pokemon)
 
 @app.route('/Deconnecter')
 def detruire_session():
@@ -39,6 +40,18 @@ def param_manquant(e):
     logger.exception(e)
     message = "Il manque un paramètres dans la requete "+ e.description
     return render_template("erreur.jinja",message = message),400
+
+@app.errorhandler(401)
+def element_inexistant(e):
+    logger.exception(e)
+    message = "Vous devez vous connecter pour avoir accès à cette page "+e.description
+    return render_template("erreur_acces.jinja",message = message),401
+
+@app.errorhandler(403)
+def element_inexistant(e):
+    logger.exception(e)
+    message = "Accès Interdit"+e.description
+    return render_template("erreur_acces.jinja",message = message),403
 
 @app.errorhandler(404)
 def element_inexistant(e):

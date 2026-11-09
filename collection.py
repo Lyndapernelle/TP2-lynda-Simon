@@ -13,19 +13,24 @@ from config import Config
 
 bp_collection= Blueprint('collection', __name__)
 
+
+
 @bp_collection.route('/page_collection', methods=["GET", "POST"])
 def page_de_collection():
-
+    if not 'courriel' in session:
+        abort(401,"")
     with bd.creer_connexion() as conn:
         pokemon = bd.affiche_carte_accueil(conn=conn,id_collectionneur = session['id'])
         return render_template("collection/page_collection.jinja", lesPokemons = pokemon)
 
 @bp_collection.route('/recherche',methods=["GET"])
 def recherche():
+    if not 'courriel' in session:
+        abort(401,"")
     pNom = request.args.get('nom_pokemon', default='').strip()
     pNumero = request.args.get('numero',type=int)
     pType = request.args.get('types', default='').strip()
-    pRarete = request.args.get('rarete',default='').strip() # Ces paramêtres ne sont pas obligatoires
+    pRarete = request.args.get('rarete',default='').strip()
     pSuperType = request.args.get('supertype')
         
     if not valide_supertype(pType):

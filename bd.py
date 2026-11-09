@@ -45,6 +45,23 @@ def get_curseur(self):
     finally:
         curseur.close()
 
+def accueil_invite(conn):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute(
+                "select ci.id, ci.condition, ci.cost, ci.status, " +
+                "pc.name, pc.set_num, pc.types, pc.rarity " +
+                "FROM collection_items ci " +
+                "JOIN pokemon_card pc ON pc.id = ci.card_id " +
+                "WHERE ci.status like 'disponible' " +
+                "ORDER BY ci.added_date DESC " +
+                "limit 10"
+            )
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+        pokemon = curseur.fetchall()
+        return pokemon
+
 def affiche_carte_accueil(conn,id_collectionneur):
     with conn.get_curseur() as curseur:
                 try:
