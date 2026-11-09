@@ -233,3 +233,37 @@ def obtenir_credit(conn, courriel):
         )
         resultat = curseur.fetchone()
         return resultat[0]
+
+def trouverCompte(conn, mdp, id):
+        try:
+            with conn.cursor() as curseur:
+                curseur.execute(
+                    "SELECT mot_de_passe FROM collectionneurs "
+                    "WHERE mot_de_passe = %(mdp_hasher)s "
+                    "And WHERE id = %(id_utilisateur)s",
+                    {
+                        'mdp_hasher' : mdp,
+                        'id_utilisateur' : id
+                    }
+                )
+                resultat = curseur.fetchone()
+                return resultat
+        except Exception:   
+            abort(500,"Le serveur a rencontré une erreur")
+
+def changerMdp(conn, mdp, id):
+    try:
+        with conn.cursor() as curseur:
+            curseur.execute(
+                "UPDATE collectionneurs "
+                "SET mot_de_passe = %(nouv_mdp_hasher)s " 
+                "WHERE id = %(id_utilisateur)s",
+                {
+                    'mdp_hasher' : mdp,
+                    'id_utilisateur' : id
+                }
+            )
+    except Exception:   
+            flash('Échec de changement de mot de passe','erreur')
+            abort(500,"Le serveur a rencontré une erreur")
+     

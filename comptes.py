@@ -67,7 +67,7 @@ def connexion():
                                         msg_courriel_regex = message_courriel_regex, msg_mdp_regex = message_mdp_regex
                                     )
             else:
-                session['courriel'] = courriel_utilisateur
+                session['courriel'] = info['courriel']
                 session['id'] = info['id']
                 flash('Connexion au compte effectué avec succès','succes')
                 return redirect("/", code=303)              
@@ -148,6 +148,86 @@ def detail_utilisateur(courriel):
             credit= bd.obtenir_credit(conn=conn,courriel=courriel)
             cartes = bd.cartes_utilisateur(conn=conn,courriel=courriel)
             return render_template('compte/detail_utilisateur.jinja',cartes = cartes, courriel = courriel, credit = credit, titre= 'Information du compte')
+
+@bp_comptes.route('/mot-de-passe', methods=["POST", "GET"])
+def changer_mdp():
+    if request.method == "GET":
+        return render_template('compte/mot_de_passe.jinja', msg_mdp_invalide = '', msg_mdp_regex = '', msg_mdp_vide = '')
+    elif request.method == "POST":
+
+        mdp_actuel = request.form.get('mdp_actuel', default='').strip()
+        mdp_nouv = request.form.get('nouveau_mdp', default='').strip()
+        mdp_nouv_conf = request.form.get('nouveau_mdp_conf', default='').strip()
+    
+        regex_caractere_invalide = re.compile('<(.*)>.*?|<(.*) />')
+        regex_mdp = re.compile('^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$')
+
+        msg_mdp_invalide = ''
+        msg_mdp_regex = ''
+        msg_mdp_vide = ''
+        msg_mdpconf_ivalide = ''
+        valide_mdp = False
+        nouv_mdp = False
+        nouv_mdp_conf = False
+   
+        mdp_hasher = hasher_mdp(mdp_actuel)
+        id_utilisateur = session['id']
+        with bd.creer_connexion() as conn:
+            mdp = bd.trouverCompte(conn = conn, mdp = mdp_hasher, id = id_utilisateur)
+        if (mdp is None):
+            valide_mdp = True
+            msg_mdp_invalide = "Mot de passe invalide"
+            return render_template('compte/mot_de_passe.jinja', valide_mdp=valide_mdp, msg_mdp_invalide=msg_mdp_invalide,
+                                    nouv_mdp=nouv_mdp, msg_mdp_regex=msg_mdp_regex, msg_mdp_vide=msg_mdp_vide,
+                                    nouv_mdp_conf=nouv_mdp_conf, msg_mdp_pas_pareil=msg_mdpconf_ivalide)
+
+        elif (not mdp_actuel or not mdp_nouv or not regex_caractere_invalide.search(mdp_actuel) or not regex_mdp(mdp_actuel)):
+            if (not mdp_actuel):
+                valide_mdp = True
+                msg_mdp_vide = 'Le champ ne peut être vide'
+            if (not mdp_nouv):
+                nouv_mdp = True
+            if (not regex_caractere_invalide.search(mdp_actuel) or not regex_mdp(mdp_actuel)):
+                nouv_mdp = True
+                msg_mdp_regex = 'Le mot de passe est Invalide. Il doit contenir au moins 8 caractères, une lettre majuscule,' \
+                ' une lettre minuscule, un chiffre'
+
+            return render_template('compte/mot_de_passe.jinja', valide_mdp=valide_mdp, msg_mdp_invalide=msg_mdp_invalide,
+                               nouv_mdp=nouv_mdp, msg_mdp_regex=msg_mdp_regex, msg_mdp_vide=msg_mdp_vide,
+                               nouv_mdp_conf=nouv_mdp_conf, msg_mdp_pas_pareil=msg_mdpconf_ivalide)
+        else:
+            if (not mdp_nouv_conf or (not (mdp_nouv == mdp_nouv_conf))):
+                if (not mdp_nouv_conf):
+                    nouv_mdp_conf = True
+                    msg_mdp_vide = 'Le champ ne peut être vide'
+                elif not (mdp_nouv == mdp_nouv_conf):
+                    nouv_mdp_conf = True
+                    msg_mdpconf_ivalide = 'Veuillez écrire le même nouveau mot de passe'
+                return render_template('compte/mot-de-passe.jinja', valide_mdp = valide_mdp, msg_mdp_invalide = msg_mdp_invalide,
+                                    nouv_mdp = nouv_mdp, msg_mdp_regex = msg_mdp_regex, msg_mdp_vide = msg_mdp_vide,
+                                    nouv_mdp_conf = nouv_mdp_conf, msg_mdp_pas_pareil = msg_mdpconf_ivalide)
+            else:
+                nouv_mdp_hasher = hasher_mdp(mdp_nouv)
+                with bd.creer_connexion() as conn:
+                    bd.changerMdp(conn = conn, nouv_mdp = nouv_mdp_hasher, id = id_utilisateur)
+                    flash('Le mot de passe à été modifié avec succès','secces')
+                    redirect('/', code=303)
+                    
+@bp_comptes.route('/remboursement')
+def remboursement():
+    if request.method == 'GET':
+        return render_template('compte/remboursement.jinja')
+    elif request.method == "POST":
+        ### CODE
+
+
+
+                    
+
+
+   
+        
+
 
 
 

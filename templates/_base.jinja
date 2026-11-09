@@ -28,7 +28,10 @@
                         <a class="btn btn-warning rounded-pill px-3" href="/Deconnecter">
                             Se déconnecter
                         </a>
-                        {%if session['courriel'] == 'admin@garneau.ca'  %}
+                         <a class="btn btn-warning rounded-pill px-3" href="/compte/mot-de-passe">
+                            Changer ton mot de passe
+                        </a>
+                        {%if session['courriel'] == 'admin@garneau.ca'%}
                             <a class="btn btn-warning rounded-pill px-3" href="/compte/liste_utilisateur">
                                 Liste des utilisateurs
                             </a>

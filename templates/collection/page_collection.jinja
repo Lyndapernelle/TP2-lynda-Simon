@@ -35,10 +35,14 @@
                         {% if ligne["status"] is not none %}
                             <li class="list-group-item"> Status : {{ ligne["status"] }} </li>
                         {% endif %}
-                        <form method="POST" action="{{ url_for('collection.afficher_detail') }}"  class="list-group-item text-center">
+                        <form method="POST" action="{{ url_for('collection.afficher_detail') }}"  class="list-group-item text-end">
                             <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
                             <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
                         </form>
+                         {%if session['courriel'] == 'admin@garneau.ca'%}
+                            <a href="url_for{{'/comptes/remboursement', session['id']}}" class="list-group-item text-end"></a>
+                        {% endif %}
+                        
                     </ul>
                 </div>
             {%endfor%}
