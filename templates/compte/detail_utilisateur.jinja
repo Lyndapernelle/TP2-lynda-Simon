@@ -42,6 +42,9 @@
                                     <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
                                     <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
                             </form>
+                            <form method="GET" action="{{ url_for('comptes.rembourser',num_collection = ligne['id'], id_carte = ligne['card_id'] ) }}"  class="list-group-item mt-2 text-center">
+                                <button type="submit" class="btn btn-primary mt-1 mb-1">Rembourser</button>
+                            </form>
                             
                         </div>
                     {%endfor%}

@@ -143,6 +143,7 @@ def afficher_detail():
             abort(404,"La carte n'existe pas")
         return render_template("collection/detail.jinja", lePokemon = resultat, titre = "Détails")
 
+
 def valide_condition(pCondition):
     """ Recoit la condition de la carte en paramêtre et retourne si elle est valide ou non """
     condition_values = ['presque neuve', 'légèrement usée', 'modérément usée', 'très usée', 'abîmée']

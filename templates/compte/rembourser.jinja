@@ -1,0 +1,23 @@
+{% extends "_base.jinja" %}
+
+{% block contenu %}
+    <section>
+        <div class = "row justify-content-center">
+            <form method="POST" action="{{url_for('comptes.rembourser', num_collection=num_collection, id_carte= id_carte)}}" class="col-6 border border-primary border-2 rounded-4 p-4 mt-4">
+                <div class="mt-3">
+                    <label class="form-label">Montant à rembourser :</label>
+                    <input name="montant" type="number" class="form-control {% if message_montant %}is-invalid{% endif %}" value={{montant}}/>
+                    <p class="text-danger">{{message_montant}}</p>
+
+                </div>
+                <div class="text-center">
+                    <input type="hidden" name="num_collection" value="{{ num_collection }}">
+                    <input type="hidden" name="id_carte" value="{{ id_carte }}">
+                    <button type="submit" class="btn btn-primary text-white mt-3">Rembourser</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+
+{% endblock %}

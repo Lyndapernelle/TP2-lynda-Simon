@@ -150,7 +150,75 @@ def detail_utilisateur(courriel):
             return render_template('compte/detail_utilisateur.jinja',cartes = cartes, courriel = courriel, credit = credit, titre= 'Information du compte')
 
 
+@bp_comptes.route('/mot-de-passe',methods=["GET","POST"])
+def changer_mot_passe():
+    if not 'courriel' in session:
+        abort(401,"")
+    if request.method == 'GET':
+        return render_template('compte/changer_mdp.jinja', message_mdp= '', message_nouv_mdp='', message_conf_mdp = '')
+    elif request.method == 'POST':
+        regex_caractere_invalide = re.compile('<(.*)>.*?|<(.*) />')
+        regex_mdp = re.compile('^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$')
+        mdp = request.form.get("mdp",default='').strip()
+        nouv_mdp = request.form.get("nouv_mdp",default='').strip()
+        conf_mdp=  request.form.get("conf_mdp", default='').strip()
+        message_mdp=''
+        message_nouv_mdp = ''
+        message_conf_mdp=''
+        valide = True
+        if not mdp or not regex_mdp.match(mdp) or regex_caractere_invalide.search(mdp):
+            message_mdp= 'Le mot de passe est invalide'
+            valide = False
+        if not nouv_mdp or not regex_mdp.match(nouv_mdp) or regex_caractere_invalide.search(nouv_mdp):
+            message_nouv_mdp = 'Le mot de passe est Invalide. Il doit contenir au moins 8 caractères, une lettre majuscule,' \
+            ' une lettre minuscule, un chiffre'
+            valide = False
+        if not valide:
+            return render_template('compte/changer_mdp.jinja', message_mdp= message_mdp, message_nouv_mdp=message_nouv_mdp, message_conf_mdp = '')
+        else:
+            if not conf_mdp or conf_mdp != nouv_mdp:
+                message_conf_mdp = 'Les mots de passe doivent être identiques'
+                return render_template('compte/changer_mdp.jinja', message_mdp= message_mdp, message_nouv_mdp=message_nouv_mdp, message_conf_mdp = message_conf_mdp)
+            else:
+                mdp_hash = hasher_mdp(mdp)
+                nou_mdp_hash = hasher_mdp(nouv_mdp)
+                courriel = session['courriel']
+                with bd.creer_connexion() as conn:
+                    try: 
+                        info = bd.trouver_utilisateur(conn=conn, courriel=courriel, mdp_hash=mdp_hash)
+                    except Exception :
+                        abort(500,"Le serveur a rencontré une erreur")
+                    if (info is None):
+                        message_mdp = 'Mot de passe introuvable'
+                        return render_template('compte/changer_mdp.jinja', message_mdp= message_mdp, message_nouv_mdp=message_nouv_mdp, message_conf_mdp = message_conf_mdp)
+                    else:
+                        bd.changer_mdp(conn=conn,mdp=nou_mdp_hash,courriel=courriel)
+                        flash('Le mot de passe a été changé','succes')
+                        return redirect("/", code=303) 
 
+@bp_comptes.route('/<num_collection>/rembourser/<id_carte>',methods = ["GET","POST"])
+def rembourser(num_collection,id_carte):
+    if session['courriel'] == 'admin@garneau.ca':
+        if request.method == 'GET':
+            return render_template('compte/rembourser.jinja',message_montant='', num_collection=num_collection,id_carte=id_carte, montant='')
+        elif request.method == 'POST':
+            message_montant = ''
+            montant = request.form.get('montant',type=int, default=0)
+            if montant <0:
+                message_montant = 'Le montant ne peut pas être négatif'
+                return render_template('compte/rembourser.jinja',message_montant=message_montant, montant=montant, num_collection=num_collection,id_carte=id_carte)
+            else: 
+                with bd.creer_connexion() as conn:
+                    id_collectionneur = bd.trouver_ID_Collectionneur(conn=conn,coll_id=num_collection,card_id=id_carte)
+                    if id_collectionneur is not None:
+                        credits = int(bd.obtenir_credit_par_id(conn=conn,id=id_collectionneur))
+                        credits = credits + montant
+                        bd.modifier_credit(conn=conn,credit=credits,id_collectionneur=id_collectionneur)
+                        bd.supprimer_carte(conn=conn,card_id=id_carte,coll_id=num_collection)
+                        flash('Le remboursement a été éffectué','succes')
+                        return redirect("/", code=303) 
+    else:
+        abort(403,"")
 
 
 def hasher_mdp(mdp_clair):

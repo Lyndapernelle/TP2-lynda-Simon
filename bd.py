@@ -208,7 +208,7 @@ def lister_utilisateur(conn):
 def cartes_utilisateur(conn,courriel):
     with conn.get_curseur() as curseur:
         try:
-            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, "
+            curseur.execute( "SELECT ci.id, ci.card_id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, "
             "pc.name, pc.set_num, pc.types, pc.rarity "
             "FROM collection_items ci "
             "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
@@ -233,3 +233,75 @@ def obtenir_credit(conn, courriel):
         )
         resultat = curseur.fetchone()
         return resultat[0]
+
+def changer_mdp(conn,mdp,courriel):
+    with conn.cursor() as curseur:
+        try:
+            curseur.execute("UPDATE collectionneurs "
+            "SET mot_de_passe = %(mdp)s " 
+            "WHERE courriel = %(courriel)s ",
+            {
+                'mdp':mdp,
+                'courriel': courriel
+
+            })
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+
+def trouver_ID_Collectionneur(conn, coll_id, card_id):
+    with conn.cursor() as curseur:
+        try:
+            curseur.execute("SELECT id_collectionneur from collection_items "
+            "WHERE id = %(coll_id)s  AND card_id = %(card_id)s",
+            {
+                'id': coll_id,
+                'card_id': card_id
+
+            })
+
+            resultat = curseur.fetchone()
+            return resultat[0]
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+
+def obtenir_credit_par_id(conn,id):
+    with conn.cursor() as curseur:
+        try:
+            curseur.execute("SELECT credit from collectionneurs "
+            "WHERE id = %(col_id)s ",
+            {
+                'col_id':id
+
+            })
+            resultat = curseur.fetchone()
+            return resultat[0]
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+
+def modifier_credit(conn,credit,id_collectionneur):
+    with conn.cursor() as curseur:
+        try:
+            curseur.execute("UPDATE collectionneurs "
+            "SET credit = %(credit)s " 
+            "WHERE id = %(id_collectionneur)s ",
+            {
+                'credit':credit,
+                'id_collectionneur': id_collectionneur
+
+            })
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+
+def supprimer_carte(conn,card_id,coll_id):
+    with conn.cursor() as curseur:
+        try:
+            curseur.execute("DROP FROM collection_items "
+            "WHERE id = %(coll_id)s AND card_id = %(card_id)s ",
+            {
+                'coll_id':coll_id,
+                'card_id': card_id
+
+            })
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+     
