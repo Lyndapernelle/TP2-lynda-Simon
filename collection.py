@@ -6,14 +6,14 @@ from flask import Flask, render_template, request, redirect, abort, Blueprint, u
 from flask.logging import create_logger
 import mysql.connector
 from mysql.connector import Error
-import bd
+import uuid
+from werkzeug.utils import secure_filename
+import bd, os
 import re
 import html
 from config import Config
-
 bp_collection= Blueprint('collection', __name__)
-
-
+chemin_import = os.path.join(bp_collection.root_path, *["static", "image", "imports"])
 
 @bp_collection.route('/page_collection', methods=["GET", "POST"])
 def page_de_collection():
@@ -53,18 +53,18 @@ def ajouter(pokemon_id):
         with bd.creer_connexion() as conn:
             resultat = bd.selectionner(conn=conn,id=pokemon_id)
             return render_template('collection/ajout_carte.jinja', ajouterPokemon = resultat,cout = '',
-            message_condition = '', message_cout = '', message_statut = '') 
+            message_condition = '', message_cout = '', message_statut = '',message_image='') 
     elif request.method == "POST":
         condition_pokemon = request.form.get('condition', default='').strip()
         cout_pokemon = request.form.get('cout', type=int, default=0)
         statut_pokemon = request.form.get('statut', default='').strip()
-
+        fichier = request.files.get('image')
         message_condition = ''
         message_cout = ''
         message_statut = ''
-
+        message_image=''
         valide = True
-            
+        src =''
         if not pokemon_id:
             abort(404, "paramêtre 'id_pokemon' invalide")
             
@@ -77,16 +77,29 @@ def ajouter(pokemon_id):
         if not valide_statut(statut_pokemon):
             message_statut = 'statut invalide'
             valide = False
-                
-        if (not valide):
+        if fichier.filename:
+            if (len(fichier.filename)<6 or len(fichier.filename)>50):
+                message_image="Nom d'image Invalide"
+                valide = False  
+            else:
+                nom_image = uuid.uuid4().hex[:5] + '_' + secure_filename(fichier.filename)
+                chemin_complet = os.path.join(chemin_import, nom_image)
+                fichier.save(chemin_complet)
+                src = '/static/image/imports/'+ nom_image
+        else:
+            src='/static/image/image.jpeg'
+            
+        
+    if (not valide):
             with bd.creer_connexion() as conn:
                 resultat = bd.selectionner(conn=conn,id=pokemon_id)
                 return render_template('collection/ajout_carte.jinja', ajouterPokemon = resultat, cout = cout_pokemon,
-                message_condition = message_condition, message_cout = message_cout, message_statut = message_statut)    
-        with bd.creer_connexion() as conn:
-            bd.ajouter(conn=conn,id=pokemon_id,id_collectionneur=session['id'],condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon)
-            return redirect(url_for('collection.page_de_collection'),
-                                        code=303)
+                message_condition = message_condition, message_cout = message_cout, message_statut = message_statut, message_image=message_image)    
+
+    with bd.creer_connexion() as conn:
+        bd.ajouter(conn=conn,id=pokemon_id,id_collectionneur=session['id'],condition_pokemon=condition_pokemon,cout_pokemon=cout_pokemon,statut_pokemon=statut_pokemon,src= src)
+        return redirect(url_for('collection.page_de_collection'),
+                                    code=303)
     
 
 @bp_collection.route('/modif_carte/<string:id_pokemon>', methods=["POST","GET"])
@@ -166,3 +179,4 @@ def valide_supertype(pSupertype):
         if (pSupertype == value):
             return True
     return False
+

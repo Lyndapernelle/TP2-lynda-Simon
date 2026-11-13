@@ -49,7 +49,7 @@ def accueil_invite(conn):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute(
-                "select ci.id, ci.condition, ci.cost, ci.status, " +
+                "select ci.id, ci.condition, ci.cost, ci.status, ci.photo, " +
                 "pc.name, pc.set_num, pc.types, pc.rarity " +
                 "FROM collection_items ci " +
                 "JOIN pokemon_card pc ON pc.id = ci.card_id " +
@@ -66,7 +66,7 @@ def affiche_carte_accueil(conn,id_collectionneur):
     with conn.get_curseur() as curseur:
                 try:
                     curseur.execute(
-                "SELECT ci.id, ci.`condition`, ci.cost, ci.status, pc.name, pc.set_num, pc.types, pc.rarity "
+                "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.photo, pc.name, pc.set_num, pc.types, pc.rarity "
                 "FROM collection_items ci "
                 "JOIN pokemon_card pc ON pc.id = ci.card_id "
                 "WHERE ci.id_collectionneur = %(id_collectionneur)s "
@@ -107,7 +107,7 @@ def rechercher(conn, pNom, pNumero, pType, pRarete, pSuperType):
 def afficher_detail(conn,id):
       with conn.get_curseur() as curseur:
                      try:
-                         curseur.execute("select pc.*, ci.added_date, ci.condition, ci.cost, ci.status" +
+                         curseur.execute("select pc.*, ci.added_date, ci.condition, ci.cost, ci.status,ci.photo" +
                          " from collection_items ci"+
                          " join pokemon_card pc on pc.id = ci.card_id"+
                          " where ci.id = %(id)s",
@@ -147,21 +147,23 @@ def selectionner(conn, id):
         resultat = curseur.fetchone()
         return resultat
 
-def ajouter(conn,id,id_collectionneur,condition_pokemon,cout_pokemon,statut_pokemon):
+def ajouter(conn,id,id_collectionneur,condition_pokemon,cout_pokemon,statut_pokemon,src):
        with conn.get_curseur() as curseur:
             try:
-                curseur.execute("INSERT INTO collection_items (`id_collectionneur`,`card_id`, `condition`, `cost`, `status`) "
-                "VALUES(%(id_collectionneur)s,%(card_id)s, %(condition)s, %(cout)s, %(status)s)",
+                curseur.execute("INSERT INTO collection_items (`id_collectionneur`,`card_id`, `condition`, `cost`, `status`,`photo`) "
+                "VALUES(%(id_collectionneur)s,%(card_id)s, %(condition)s, %(cout)s, %(status)s,%(src)s)",
                 {
                     'id_collectionneur': id_collectionneur,
                     'card_id' : id,
                     'condition' : condition_pokemon,
                     'cout' : cout_pokemon,
-                    'status' : statut_pokemon
+                    'status' : statut_pokemon,
+                    'src' : src
                 }
             )
-            except Exception:
-                abort(500,"Le serveur a rencontré une erreur")
+            except Exception as e:
+                print("ERREUR SQL :", repr(e), flush=True)
+                abort(500, "Le serveur a rencontré une erreur")
 
 def trouver_utilisateur(conn,courriel,mdp_hash):
     with conn.get_curseur() as curseur:

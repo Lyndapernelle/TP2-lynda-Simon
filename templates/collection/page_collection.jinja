@@ -12,8 +12,8 @@
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
             {%for ligne in lesPokemons %}
                 <div class="card" style="width: 15rem;">
-                    <img src="../static/image/image.jpeg" class="card-img-top" alt="Image Pokemon">
-                    <div class="card-body">
+                    <img src="{{ligne['photo']}}" class="card-img-top p-2" alt="Image Pokemon">
+                    <div class="card-body p-4">
                         <h5 class="card-title">{{ligne["name"]}}</h5>
                     </div>
                     <ul class="list-group list-group-flush">            
@@ -35,10 +35,12 @@
                         {% if ligne["status"] is not none %}
                             <li class="list-group-item"> Status : {{ ligne["status"] }} </li>
                         {% endif %}
-                        <form method="POST" action="{{ url_for('collection.afficher_detail') }}"  class="list-group-item text-center">
-                            <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
-                            <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
-                        </form>
+                        <li class="list-group-item text-center">
+                            <form method="POST" action="{{ url_for('collection.afficher_detail') }}">  
+                                <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
+                                <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             {%endfor%}

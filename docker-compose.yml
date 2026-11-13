@@ -15,6 +15,8 @@ services:
       retries: 3
 
   app:
+    volumes:
+      - app_data:/app/static
     build: .
     env_file: ".env"
     ports:
@@ -25,3 +27,4 @@ services:
 
 volumes:
   db_data:
+  app_data:

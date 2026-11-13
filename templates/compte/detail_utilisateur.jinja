@@ -20,7 +20,7 @@
                 {% else %}
                     {%for ligne in cartes %}
                         <div class="card" style="width: 16rem;">
-                            <img src="/static/image/image.jpeg" class="card-img-top" alt="Image Pokemon">
+                            <img src="{{ligne["photo"]}}" class="card-img-top" alt="Image Pokemon">
                             <div class="card-body">
                                 <h5 class="card-title">{{ligne["name"]}}</h5>
                             </div>
