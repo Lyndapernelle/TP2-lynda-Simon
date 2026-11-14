@@ -6,6 +6,7 @@ import mysql.connector
 from mysql.connector import Error
 import bd
 import re
+import uuid
 import html
 import sys
 import hashlib
@@ -68,7 +69,8 @@ def connexion():
                                     )
             else:
                 session['courriel'] = courriel_utilisateur
-                session['id'] = info['id']
+                ### créer un random_id
+                session['id'] = str(uuid.uuid4()).hex()
                 flash('Connexion au compte effectué avec succès','succes')
                 return redirect("/", code=303)              
            

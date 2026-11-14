@@ -2,7 +2,7 @@
 Exercice de page de détails
 """
 
-from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for, session
+from flask import Flask, render_template, request, redirect, abort, Blueprint, url_for, session, flash
 from flask.logging import create_logger
 import mysql.connector
 from mysql.connector import Error
@@ -18,7 +18,7 @@ chemin_import = os.path.join(bp_collection.root_path, *["static", "image", "impo
 @bp_collection.route('/page_collection', methods=["GET", "POST"])
 def page_de_collection():
     if not 'courriel' in session:
-        abort(401,"")
+        abort(401,"Vous devez être connecté pour accèder à cette page.")
     with bd.creer_connexion() as conn:
         pokemon = bd.affiche_carte_accueil(conn=conn,id_collectionneur = session['id'])
         return render_template("collection/page_collection.jinja", lesPokemons = pokemon)
@@ -88,8 +88,7 @@ def ajouter(pokemon_id):
                 src = '/static/image/imports/'+ nom_image
         else:
             src='/static/image/image.jpeg'
-            
-        
+                   
     if (not valide):
             with bd.creer_connexion() as conn:
                 resultat = bd.selectionner(conn=conn,id=pokemon_id)
@@ -106,22 +105,25 @@ def ajouter(pokemon_id):
 def modifier_carte(id_pokemon):
     if request.method == "GET":
         with bd.creer_connexion() as conn:
-            resultat = bd.selectionner(conn=conn,id=id_pokemon)
-            return render_template("collection/modif_carte.jinja", ajouterPokemon = resultat, titre = "Modifier  une carte", 
-                message_condition = '', message_cout = '', message_statut = '',cout = '')
+            resultat = bd.selectionner(conn=conn,id=id_pokemon, id_collectionneur=session['id'])
+            return render_template("collection/modif_carte.jinja", ajouterPokemon = resultat, titre = "Modifier une carte", 
+                message_condition = '', message_cout = '', message_statut = '',cout = '', message_image = '')
     elif request.method == "POST": 
         if not id_pokemon :
             abort(404, "paramêtre 'id_pokemon' invalide") 
 
+        fichier = request.files.get('image')
         condition_pokemon = request.form.get('condition', default='').strip()
         cout_pokemon = request.form.get('cout', type=int, default=0)
         statut_pokemon = request.form.get('statut', default='').strip()
-
+        
         message_condition = ''
         message_cout = ''
         message_statut = ''
+        message_image=''
 
         valide = True
+        src =''
         
         if not valide_condition(condition_pokemon):
             message_condition = 'Condition invalide'
@@ -132,21 +134,32 @@ def modifier_carte(id_pokemon):
         if not valide_statut(statut_pokemon):
             message_statut = 'statut invalide'
             valide = False
+        if fichier.filename:
+            if (len(fichier.filename)<6 or len(fichier.filename)>50):
+                message_image="Nom d'image Invalide"
+                valide = False  
+            else:
+                nom_image = uuid.uuid4().hex[:5] + '_' + secure_filename(fichier.filename)
+                chemin_complet = os.path.join(chemin_import, nom_image)
+                fichier.save(chemin_complet)
+                src = '/static/image/imports/'+ nom_image
+        else:
+            src='/static/image/image.jpeg'
 
         if(not valide):
             with bd.creer_connexion() as conn:
                 resultat = bd.selectionner(conn=conn,id=id_pokemon)
                 return render_template("collection/modif_carte.jinja", ajouterPokemon = resultat, titre = "Modifier  une carte", 
-                    message_condition = message_condition, message_cout = message_cout, message_statut = message_statut,cout = cout_pokemon)
+                    message_condition = message_condition, message_cout = message_cout, message_statut = message_statut,cout = cout_pokemon,
+                    message_image = message_image)
 
         with bd.creer_connexion() as conn:
-            bd.modifier(conn,id_pokemon,condition_pokemon,cout_pokemon,statut_pokemon)
+            bd.modifier(conn = conn,id_pokemon = id_pokemon, condition_pokemon = condition_pokemon, cout_pokemon = cout_pokemon,statut_pokemon = statut_pokemon, src = src)
             return redirect(url_for('collection.page_de_collection'), code = 303)
 
+@bp_collection.route('/detail/<string:id_pokemon>', methods = ["GET"])
+def afficher_detail(id_pokemon):
 
-@bp_collection.route('/detail', methods = ["GET","POST"])
-def afficher_detail():
-    id_pokemon = request.form.get("id_pokemon")
     if not id_pokemon :
         abort(404,"La carte n'existe pas")     
     else:

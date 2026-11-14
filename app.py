@@ -29,7 +29,7 @@ def index():
     if 'courriel' in session:
         session.permanent = True
     else: 
-        flash('Veuillez vous connecter','erreur')
+        flash('Veuillez vous connecter pour avoir accès à toutes les fonctionnalités.','erreur')
     with bd.creer_connexion() as conn:
         pokemon = bd.accueil_invite(conn=conn)
         return render_template("menu/index.jinja", lesPokemons = pokemon)

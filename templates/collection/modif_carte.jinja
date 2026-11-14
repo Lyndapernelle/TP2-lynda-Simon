@@ -1,32 +1,18 @@
 {% extends "_base.jinja" %}
  
 {% block contenu %}
-    <section class="row justify-content-between">
-        <div class="col-md-4 mt-2">
-            <img src="/static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
+    <section class="row">
+        <div class="col-md-6 mt-2">
+            <img src="..{{ajouterPokemon["photo"]}}" class="card-img-top img-fluid" alt="Image du pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" action="{{ url_for('collection.modifier_carte',id_pokemon = ajouterPokemon.id) }}">
+        <form method="POST" class="col-md-6 align-items-center" enctype="multipart/form-data" action="{{ url_for('collection.modifier_carte',id_pokemon = ajouterPokemon.id) }}">
             <section class="fs-4">
                 <div class="mb-2">
                     <label class="form-label">Nom du Pokemon : </label>
-                    <input type="text" class="form-control w-50" name="nom_pokemon" value ="{{ ajouterPokemon["name"] }}"></input>
+                     <h3 class="mb-3"> {{ajouterPokemon["name"]}}</h3>
                 </div>
                 <div class="mb-2">
-                    <label class="form-label">Type : </label>
-                    <input type="text" class="form-control w-50" name="type_pokemon" value ="{{ ajouterPokemon["types"] | replace("[", "") | replace("]", "") | replace("'", "") }}"></input>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">Valeur : </label>
-                    <input type="text" class="form-control w-50" name ="num_pokemon" value="{{ ajouterPokemon["set_num"] }}"></input>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label">Rareté : </label>
-                    <input type="text" class="form-control w-50" name="rarete_pokemon" value="{{ ajouterPokemon["rarity"] }}"></input>
-                </div>
-            </section>
-            <section class="fs-4">
-                <div class="mb-2">
-                    <label for="condition_carte" class="form-label">La condition : </label>
+                    <label for="condition_carte" class="form-label">Condition : </label>
                     <select name="condition" id="condition_carte" class="form-select w-50"> 
                         <option value="presque neuve"> presque neuve </option>
                         <option value=" légèrement usée">  légèrement usée </option>
@@ -37,11 +23,6 @@
                     <p class="text-danger fs-5">{{message_condition}}</p>
                 </div>
                 <div class="mb-2">
-                    <label class="form-label"> Coût de la carte : </label>
-                    <input type="number" class="form-control w-50" name="cout" value="{{ cout }}" />
-                    <p class="text-danger fs-5">{{message_cout}}</p>
-                </div>
-                <div class="mb-2">
                     <label class="form-label"> Statut de la carte : </label>
                     <select name="statut" id="statut-carte" class="form-select w-50"> 
                         <option value="disponible">Disponible</option>
@@ -49,8 +30,18 @@
                     </select>
                     <p class="text-danger fs-5">{{message_statut}}</p>
                 </div>
-            </section>
-                <button type="submit" class="btn btn-primary">Ajouter à la collection</button>
+                 <div class="mb-2">
+                    <label class="form-label">Coût : </label>
+                    <input type="text" class="form-control w-50" name ="cout" value="{{ ajouterPokemon["cost"] }}"></input>
+                    <p class="text-danger fs-5">{{message_cout}}</p>
+                </div>
+                <div>
+                    <label for="image" class="form-label"> Changer l'image : </label>
+                    <input type="file" name="image" id="image" class=" form-control w-50 {%if message_image %}is-invalid{%endif%}"/>
+                    <p class="text-danger fs-5">{{message_image}}</p>
+                </div>
+            </section>          
+            <button type="submit" class="btn btn-primary">Modifier la carte</button>
         </form>
     </section>
    
