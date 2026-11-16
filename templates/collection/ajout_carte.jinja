@@ -5,7 +5,7 @@
         <div class="col-md-4 mt-2">
             <img src="/static/image/image.jpeg" class="card-img-top img-fluid" alt="Image Pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" enctype="multipart/form-data" action="{{ url_for('collection.ajouter', pokemon_id = ajouterPokemon.id)}}">
+        <form method="POST" class="col-md-6 align-items-center" enctype="multipart/form-data" action="{{ url_for('collection.ajouter', pokemon_id = pokemon_id)}}">
             <section class="fs-4">
                 <div class="mb-2">
                     <label class="form-label">Nom de la carte : </label>

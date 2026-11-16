@@ -1,10 +1,27 @@
 {% extends "_base.jinja" %}
 
 {% block contenu %}
-        <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
+    {% if 'courriel' in session%}  
+        <form method="GET" class="d-flex justify-content-center mt-4"  action="{{ url_for('index') }}">
+            <select name="statut" class="form-select w-auto me-4 bg-white border border-2 border-primary rounded-3">
+                <option value="">Tous les statuts</option>
+                <option value="disponible" {% if statut == 'disponible' %}selected{% endif %}>Disponible</option>
+                <option value="recherchée" {% if statut == 'recherchée' %}selected{% endif %}>Recherchée</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary ms-4">Appliquer</button>
+        </form>
+    {%endif%}
+    <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
+        {%if lesPokemons|length == 0 %}
+                <div class="text-center">
+                    <img src="../static/image/iconeVide.png" alt= "Aucun résultat" class="w-25"/>
+                    <p class ="fs-2 fw-bold mt-3"> Aucun résultat  🥀</p>     
+                </div>
+        {% else %}
             {%for ligne in lesPokemons %}
                 <div class="card" style="width: 15rem;">
-                    <img src="..{{ligne["photo"]}} class="card-img-top" alt="Image Pokemon">
+                    <img src="{{ligne["photo"]}}" class="card-img-top" alt="Image Pokemon">
                     <div class="card-body">
                         <h5 class="card-title">{{ligne["name"]}}</h5>
                     </div>
@@ -27,11 +44,13 @@
                         {% if ligne["status"] is not none %}
                             <li class="list-group-item"> Status : {{ ligne["status"] }} </li>
                         {% endif %}
-                        <form method="GET" action="{{ url_for('collection.afficher_detail',id_pokemon = ligne["id"]) }}">
-                            <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
-                        </form>
+                        
                     </ul>
+                    <form method="GET" action="{{ url_for('collection.afficher_detail',coll_id = ligne["id"]) }}">
+                        <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
+                    </form>
                 </div>
             {%endfor%}
-        </div>
+        {%endif%}
+    </div>
 {% endblock %}

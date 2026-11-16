@@ -38,9 +38,8 @@
                                 {% endif %}
 
                             </ul>
-                            <form method="POST" action="{{ url_for('collection.afficher_detail') }}"  class="list-group-item text-center">
-                                    <input type="hidden" name="id_pokemon" value="{{ ligne['id'] }}">
-                                    <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
+                            <form method="GET" action="{{ url_for('collection.afficher_detail',coll_id = ligne["id"]) }}">
+                                <button type="submit" class="btn btn-primary mt-1 mb-1">Afficher les détails</button>
                             </form>
                             
                         </div>

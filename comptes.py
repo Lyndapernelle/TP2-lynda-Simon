@@ -69,8 +69,7 @@ def connexion():
                                     )
             else:
                 session['courriel'] = courriel_utilisateur
-                ### créer un random_id
-                session['id'] = str(uuid.uuid4()).hex()
+                session['id'] = info['id']
                 flash('Connexion au compte effectué avec succès','succes')
                 return redirect("/", code=303)              
            

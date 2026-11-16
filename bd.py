@@ -49,7 +49,7 @@ def accueil_invite(conn):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute(
-                "select ci.id, ci.condition, ci.cost, ci.status, ci.photo, " +
+                "select ci.id, ci.card_id, ci.`condition`, ci.cost, ci.status, ci.photo, " +
                 "pc.name, pc.set_num, pc.types, pc.rarity " +
                 "FROM collection_items ci " +
                 "JOIN pokemon_card pc ON pc.id = ci.card_id " +
@@ -62,24 +62,42 @@ def accueil_invite(conn):
         pokemon = curseur.fetchall()
         return pokemon
 
-def affiche_carte_accueil(conn,id_collectionneur):
+def affiche_carte_collection(conn,id_collectionneur):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute(
-                "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.photo, pc.name, pc.set_num, pc.types, pc.rarity"
-                "FROM collection_items ci"
-                "JOIN pokemon_card pc ON pc.id = ci.card_id "
-                "WHERE ci.id_collectionneur != %(id_collectionneur)s "
-                "ORDER BY ci.added_date DESC",
+            "SELECT ci.id, ci.card_id, ci.`condition`, ci.cost, ci.status, ci.photo, pc.name, pc.set_num, pc.types, pc.rarity "
+            "FROM collection_items ci "
+            "JOIN pokemon_card pc ON pc.id = ci.card_id "
+            "WHERE ci.id_collectionneur = %(id_collectionneur)s "
+            "ORDER BY ci.added_date DESC",
             {
                 'id_collectionneur': id_collectionneur
             }
             )
-            pokemon = curseur.fetchall()
-            return pokemon    
         except Exception:
-            abort(500,"Le serveur a rencontré une erreur.")
-
+                abort(500,"Le serveur a rencontré une erreur.")
+        pokemon = curseur.fetchall()
+        return pokemon
+def affiche_carte_accueil(conn,id_collectionneur,statut):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute(
+            "SELECT ci.id, ci.card_id, ci.`condition`, ci.cost, ci.status, ci.photo, pc.name, pc.set_num, pc.types, pc.rarity "
+            "FROM collection_items ci "
+            "JOIN pokemon_card pc ON pc.id = ci.card_id "
+            "WHERE ci.id_collectionneur = %(id_collectionneur)s " 
+            "AND ci.status = %(statut)s "
+            "ORDER BY ci.added_date DESC",
+            {
+                'id_collectionneur': id_collectionneur,
+                'statut': statut
+            }
+            )
+        except Exception:
+                abort(500,"Le serveur a rencontré une erreur.")
+        pokemon = curseur.fetchall()
+        return pokemon
 def rechercher(conn, pNom, pNumero, pType, pRarete, pSuperType):
       with conn.get_curseur() as curseur:
                 try:
@@ -105,33 +123,34 @@ def rechercher(conn, pNom, pNumero, pType, pRarete, pSuperType):
                 return resultat     
 
 def afficher_detail(conn,id):
-      with conn.get_curseur() as curseur:
+    with conn.get_curseur() as curseur:
         try:
-            curseur.execute("select pc.*, ci.added_date, ci.`condition`, ci.cost, ci.status, ci.photo, ci.id_collectionneur" +
-                " from collection_items ci "
-                " join pokemon_card pc on pc.id = ci.card_id "
-                " where ci.id = %(id_carte)s",
-                {
-                    'id_carte': id
-                }
-            )
-            resultat = curseur.fetchone()
-            return resultat
+            curseur.execute("SELECT pc.*, ci.id AS id_item, ci.id_collectionneur, ci.added_date, "
+                "ci.`condition`, ci.cost, ci.status, ci.photo "
+                "FROM collection_items ci "
+                "JOIN pokemon_card pc ON pc.id = ci.card_id "
+                "WHERE ci.id = %(id_coll)s",
+            {
+                'id_coll': id
+            })
         except Exception:
             abort(500,"Le serveur a rencontré une erreur.")
+        resultat = curseur.fetchone()
+        return resultat
+
      
 
-def modifier(conn,id_pokemon,condition_pokemon,cout_pokemon,statut_pokemon,src):
+def modifier(conn,id_coll,condition_pokemon,cout_pokemon,statut_pokemon,src):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute("UPDATE collection_items "
             "SET status = %(pokemon_status)s, "
             "cost = %(pokemon_cout)s, "
-            "`condition` = %(pokemon_condition)s " 
-            "`photo` = %(photo_src)s "
-            "WHERE card_id = %(pokemon_id)s ",
+            "`condition` = %(pokemon_condition)s, " 
+            "photo = %(photo_src)s "
+            "WHERE id = %(id_coll)s ",
             {
-                'pokemon_id' : id_pokemon,
+                'id_coll' : id_coll,
                 'pokemon_condition' : condition_pokemon,
                 'pokemon_cout' : cout_pokemon,
                 'pokemon_status' : statut_pokemon,
@@ -141,23 +160,38 @@ def modifier(conn,id_pokemon,condition_pokemon,cout_pokemon,statut_pokemon,src):
         except Exception:
             abort(500,"Le serveur a rencontré une erreur.")
 
-def selectionner(conn, id, id_collectionneur):
+def selectionner(conn, id_coll):
     try:
         with conn.get_curseur() as curseur:
-            curseur.execute("select pc.name, ci.added_date, ci.`condition`, ci.cost, ci.photo "
+            curseur.execute("select pc.name, ci.added_date, ci.`condition`, ci.cost, ci.photo, ci.id "
                 "from collection_items ci "
                 "join pokemon_card pc on pc.id = ci.card_id "
-                "where ci.card_id = %(id_carte)s "
-                "and ci.id_collectionneur = %(id_collectionneur)s",
+                "where ci.id = %(id_coll)s ",
                 {
-                    'id_carte': id,
-                    'id_collectionneur' : id_collectionneur
+                    'id_coll': id_coll
                 }
             )
-        resultat = curseur.fetchone()
-        return resultat
+            resultat = curseur.fetchone()
+            return resultat
     except Exception:
         abort(500, "Le serveur a rencontré une erreur")
+
+def selectionner_carte(conn,id_carte):
+    try:
+            with conn.get_curseur() as curseur:
+                curseur.execute("select id, name, set_num, types, supertype ,rarity "
+                    "from  pokemon_card "
+                    "where id = %(id_carte)s ",
+                    {
+                        'id_carte': id_carte
+                    }
+                )
+                resultat = curseur.fetchone()
+                return resultat
+    except Exception:
+        abort(500, "Le serveur a rencontré une erreur")
+
+
 
 def ajouter(conn,id,id_collectionneur,condition_pokemon,cout_pokemon,statut_pokemon,src):
        with conn.get_curseur() as curseur:
@@ -174,7 +208,6 @@ def ajouter(conn,id,id_collectionneur,condition_pokemon,cout_pokemon,statut_poke
                 }
             )
             except Exception as e:
-                print("ERREUR SQL :", repr(e), flush=True)
                 abort(500, "Le serveur a rencontré une erreur")
 
 def trouver_utilisateur(conn,courriel,mdp_hash):

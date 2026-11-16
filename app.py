@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, flash, redirect
+from flask import Flask, render_template, session, flash, redirect, request, abort
 from flask.logging import create_logger
 import mysql.connector
 from mysql.connector import Error
@@ -24,15 +24,25 @@ app.secret_key = "f78bde7e6d92cfdf4d58392353e16032bb79417924d30ad7b6c733f00131ca
 app.register_blueprint(bp_collection, url_prefix='/collection')
 app.register_blueprint(bp_comptes, url_prefix='/compte')
 
-@app.route('/')
+@app.route('/',)
 def index():
     if 'courriel' in session:
         session.permanent = True
-    else: 
+        statut = request.args.get('statut', default='').strip()
+        if statut not in ('', 'disponible', 'recherchée'):
+            abort(400, "statut invalide")
+        with bd.creer_connexion() as conn:
+            if statut == '':
+                pokemon = bd.affiche_carte_collection(conn=conn,id_collectionneur = session['id'])
+            else:
+                pokemon = bd.affiche_carte_accueil(conn=conn,id_collectionneur = session['id'],statut =statut)
+        return render_template("menu/index.jinja", lesPokemons = pokemon, statut= statut)
+    else:    
         flash('Veuillez vous connecter pour avoir accès à toutes les fonctionnalités.','erreur')
-    with bd.creer_connexion() as conn:
-        pokemon = bd.accueil_invite(conn=conn)
-        return render_template("menu/index.jinja", lesPokemons = pokemon)
+        with bd.creer_connexion() as conn:
+            pokemon = bd.accueil_invite(conn=conn)
+            return render_template("menu/index.jinja", lesPokemons = pokemon, statut='')
+   
 
 @app.route('/Deconnecter')
 def detruire_session():

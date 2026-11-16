@@ -1,16 +1,14 @@
 {% extends "_base.jinja" %}
  
 {% block contenu %}
-    <section class="row">
-        <div class="col-md-6 mt-2">
-            <img src="..{{ajouterPokemon["photo"]}}" class="card-img-top img-fluid" alt="Image du pokemon">
+    <section class="row justify-content-between mt-4">
+        <div class="col-md-5 mt-2">
+            <img src="{{ajouterPokemon["photo"]}}" class="card-img-top img-fluid" alt="Image du pokemon">
         </div>  
-        <form method="POST" class="col-md-6 align-items-center" enctype="multipart/form-data" action="{{ url_for('collection.modifier_carte',id_pokemon = ajouterPokemon.id) }}">
-            <section class="fs-4">
-                <div class="mb-2">
-                    <label class="form-label">Nom du Pokemon : </label>
-                     <h3 class="mb-3"> {{ajouterPokemon["name"]}}</h3>
-                </div>
+        <form method="POST" class="col-md-6 align-items-center " enctype="multipart/form-data" action="{{ url_for('collection.modifier_carte',coll_id = ajouterPokemon.id) }}">
+            <section class="fs-4 ">
+                <p class="mb-3 mt-3 fs-4 fw-semibold">Nom du Pokemon : {{ajouterPokemon["name"]}}</p>
+
                 <div class="mb-2">
                     <label for="condition_carte" class="form-label">Condition : </label>
                     <select name="condition" id="condition_carte" class="form-select w-50"> 
