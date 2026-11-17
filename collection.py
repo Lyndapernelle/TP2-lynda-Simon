@@ -178,6 +178,16 @@ def afficher_detail(coll_id):
             abort(404,"La carte n'existe pas")
         return render_template("collection/detail.jinja", lePokemon = resultat, titre = "Détails")
 
+@bp_collection.route('/accepter_offre/<int:offre_id>')
+def accepter_offre(offre_id):
+    if not offre_id:
+        abort(404,"La carte n'existe pas")  
+    else:
+        with bd.creer_connexion() as conn:
+            bd.accepter_offre(conn=conn,id=offre_id)
+            flash("L'offre a été accepté ")
+            redirect(url_for('collection.page_de_collection'), code = 303)
+
 def valide_condition(pCondition):
     """ Recoit la condition de la carte en paramêtre et retourne si elle est valide ou non """
     condition_values = ['presque neuve', 'légèrement usée', 'modérément usée', 'très usée', 'abîmée']
