@@ -3,26 +3,27 @@
 {% block contenu %}
     <div class="row justify-content-center  container mt-5">
         <div class="col-md-7">
-            <img src="{{lePokemon[6]}}" class="w-75" alt="Image du pokemon">
+            <img src="{{lePokemon['photo']}}" class="w-75" alt="Image du pokemon">
         </div>
         <div class="col-md-5">
             <div class="d-flex align-items-center fs-3">
-                <ul class="list-group mt-3">
-                    <h3 class="mb-3"> {{lePokemon["name"]}}</h3>
-                    <li class="list-group-item"><strong>Nom du pokemon :</strong> {{lePokemon[1]}} </li>
-                    <li class="list-group-item"><strong>Coût de base :</strong> {{lePokemon[2]}} </li>
-                    <li class="list-group-item"><strong>Propriétaire :</strong> {{lePokemon[5]}} </li>
+                <ul class="list-group mt-3">   
+                    <li class="list-group-item"><strong>Nom du pokemon :</strong> {{lePokemon['name']}} </li>
+                    <li class="list-group-item"><strong>Coût de base :</strong> {{lePokemon['cost']}} </li>
+                    <li class="list-group-item"><strong>Propriétaire :</strong> {{lePokemon['courriel']}} </li>
                     <li class="list-group-item"><strong>Statut :</strong>
                         <span class="badge bg-{% if lePokemon[3] == "disponible" %}success{% else %}warning{% endif %}">
-                        {{ lePokemon[3] }}
+                        {{ lePokemon['status'] }}
                         </span>
                     </li>
-                    {% if lePokemon[3] == 'disponible' %}
-                        <form method="POST" class="mt-3" action="{{url_for('collection.ajout_offre',id_carte = lePokemon[7]}}">
-                            <label>Prix offer : </label>
-                            <input type="text" name="prix_offert" placeholder="Entrez un montant..." class="{% if error %}is-invalid{% endif %}" value="{{prix_offert}}"></input>               
-                            <button type="submit" class="btn btn-primary">Mettre un offre</button> 
-                        </form>    
+                    {% if lePokemon['status'] == 'disponible' %}
+                        <li class="list-group-item">
+                            <form method="POST" class="mt-3" action="{{url_for('collection.ajout_offre',id_item=lePokemon['id'])}}">
+                                <label>Prix offer : </label>
+                                <input type="number" name="prix" placeholder="Entrez un montant..." class="{% if error %}is-invalid{% endif %}" value="{{prix_offert}}"/>              
+                                <button type="submit" class="btn btn-primary">Mettre un offre</button> 
+                            </form>  
+                        </li>  
                     {% endif%}
                         
                 </ul>

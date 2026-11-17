@@ -8,10 +8,10 @@ CREATE TABLE `collectionneurs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- vider le contenu de elements_collection avant d'ajouter la contrainte de clé étrangère.
-DELETE FROM `elements_collection`;
+DELETE FROM `collection_items`;
 
 
-ALTER TABLE `elements_collection`
+ALTER TABLE `collection_items`
   ADD COLUMN `id_collectionneur` INT(10) UNSIGNED NOT NULL AFTER `id`,
   ADD CONSTRAINT `fk_elements_collectionneur` 
     FOREIGN KEY (`id_collectionneur`) REFERENCES `collectionneurs` (`id`)
@@ -25,8 +25,6 @@ CREATE TABLE `offres` (
   `statut` ENUM('en attente', 'acceptée', 'refusée') NOT NULL DEFAULT 'en attente',
   PRIMARY KEY (`id`),
   CONSTRAINT `uk_offres_composite` UNIQUE (`id_elem_collection`, `id_collectionneur`, `date`),
-  CONSTRAINT `fk_offres_element` FOREIGN KEY (`id_elem_collection`) REFERENCES `elements_collection` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_offres_element` FOREIGN KEY (`id_elem_collection`) REFERENCES `collection_items` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_offres_collectionneur` FOREIGN KEY (`id_collectionneur`) REFERENCES `collectionneurs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-
- 

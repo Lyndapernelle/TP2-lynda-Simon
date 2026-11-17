@@ -340,25 +340,16 @@ def obtenirOffres(conn, id):
         except Exception:
             abort(500,"Le serveur a rencontré une erreur")
 
-def supprimerOffre(conn, id):
-    with conn.get_curseur() as curseur:
-        curseur.execute("delete from offres "
-                       "where id = %(ids)s ",
-                       {
-                           'ids' : id
-                       }
-        )
-
 def offreCarteAjouter(conn, id):
     with conn.get_curseur() as curseur:
         try:
-            curseur.execute("select ci.id, pc.name, ci.cost, ci.status, ci.id_collectionneur, c.courriel "
+            curseur.execute("select ci.id, pc.name, ci.cost, ci.status, ci.id_collectionneur,ci.photo, c.courriel "
                 "from collection_items ci "
                 "join pokemon_card pc on pc.id = ci.card_id " 
                 "join collectionneurs c on c.id = ci.id_collectionneur "
-                "where pc.id = %(id_carte)s",
+                "where ci.id = %(id_item)s",
                 {
-                    'id_carte' : id
+                    'id_item' : id
                 }
             )  
             resultat = curseur.fetchone()
@@ -384,13 +375,13 @@ def lister_offre(conn,id_collectionneur):
         except Exception:
             abort(500,"Le serveur a rencontré une erreur")
 
-def ajouterOffre(conn, id_carte, id_collectionneur, montant):
+def ajouterOffre(conn, id_item, id_collectionneur, montant):
     try:
-        with conn.cursor() as cursor:
-            cursor.execute("insert into offres `id_elem_collection`, `id_collectionneur`, `prix_offert`"
-                "values(%(carte_id)s,%(collectionneur_id)s,%(montant_collectionneur)s)",
+        with conn.get_curseur() as curseur:
+            curseur.execute("insert into offres (`id_elem_collection`, `id_collectionneur`, `prix_offert`) "
+                "values(%(id_item)s,%(collectionneur_id)s,%(montant_collectionneur)s)",
                 {
-                    'carte_id' : id_carte,
+                    'id_item' : id_item,
                     'collectionneur_id' : id_collectionneur,
                     'montant_collectionneur' : montant
                 }

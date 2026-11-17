@@ -198,26 +198,29 @@ def lister_offre():
         return render_template("collection/liste_offre.jinja", titre="Liste Des offres", resultat = resultat) 
 
 
-@bp_collection.route('/ajout_offre/<string:id_carte>', methods= ["POST", "GET"]) 
-def ajout_offre(id_carte):
+@bp_collection.route('/ajout_offre/<int:id_item>', methods= ["POST", "GET"]) 
+def ajout_offre(id_item):
+    if 'id' not in session:
+        abort(401)
     if request.method == "GET":    
         with bd.creer_connexion() as conn:
-            resultat = bd.offreCarteAjouter(conn=conn,id=id_carte)
+            resultat = bd.offreCarteAjouter(conn=conn,id=id_item)
             if resultat is None:
                 abort(404, "La carte n'existe pas") 
             return render_template("collection/ajout_offre.jinja", titre="Ajouter une offre", lePokemon = resultat)    
     if request.method == "POST":
-        prix_offert = request.form.get("prix", default='')
+        prix_offert = request.form.get("prix", type=int)
         try:
             with bd.creer_connexion() as conn:
+                carte = bd.offreCarteAjouter(conn=conn, id=id_item)
                 resultat = bd.obtenir_credit(conn=conn, courriel=session['courriel'])    
-                if (prix_offert > resultat):
-                    return render_template("collection/ajout_offre.jinja", prix_offert = prix_offert, error = True)
+                if (prix_offert is None or prix_offert > resultat):
+                    return render_template("collection/ajout_offre.jinja", prix_offert = prix_offert, error = True,lePokemon=carte)
         except Exception:
             abort(500,"Le serveur a rencontré une erreur") 
         try :
             with bd.creer_connexion() as conn:
-                bd.ajouterOffre(conn=conn, id_carte=id_carte, id_collectionneur= session['id'], montant= prix_offert)
+                bd.ajouterOffre(conn=conn, id_item=id_item, id_collectionneur= session['id'], montant= prix_offert)
                 flash("L'offre à bien été ajouté",'succes')
                 return redirect(url_for('collection.page_de_collection'), code=303)                           
         except Exception:
