@@ -257,7 +257,7 @@ def lister_utilisateur(conn):
 def cartes_utilisateur(conn,courriel):
     with conn.get_curseur() as curseur:
         try:
-            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, "
+            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, c.courriel, pc.name "
             "pc.name, pc.set_num, pc.types, pc.rarity "
             "FROM collection_items ci "
             "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
@@ -385,5 +385,15 @@ def lister_offre(conn,id_collectionneur):
             abort(500,"Le serveur a rencontré une erreur")
 
 def ajouterOffre(conn, id_carte, id_collectionneur, montant):
-    with conn.cursor() as cursor:
-        cursor.execute("insert  ")
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("insert into offres `id_elem_collection`, `id_collectionneur`, `prix_offert`"
+                "values(%(carte_id)s,%(collectionneur_id)s,%(montant_collectionneur)s)",
+                {
+                    'carte_id' : id_carte,
+                    'collectionneur_id' : id_collectionneur,
+                    'montant_collectionneur' : montant
+                }
+            )
+    except Exception:
+        abort(500,"Le serveur a rencontré une erreur")

@@ -207,7 +207,14 @@ def ajout_offre(id_carte):
                 abort(404, "La carte n'existe pas") 
             return render_template("collection/ajout_offre.jinja", titre="Ajouter une offre", lePokemon = resultat)    
     if request.method == "POST":
-        prix_offert = request.args.get("prix", default='')
+        prix_offert = request.form.get("prix", default='')
+        try:
+            with bd.creer_connexion() as conn:
+                resultat = bd.obtenir_credit(conn=conn, courriel=session['courriel'])    
+                if (prix_offert > resultat):
+                    return render_template("collection/ajout_offre.jinja", prix_offert = prix_offert, error = True)
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur") 
         try :
             with bd.creer_connexion() as conn:
                 bd.ajouterOffre(conn=conn, id_carte=id_carte, id_collectionneur= session['id'], montant= prix_offert)
