@@ -208,6 +208,8 @@ def ajouter(conn,id,id_collectionneur,condition_pokemon,cout_pokemon,statut_poke
             except Exception as e:
                 abort(500, "Le serveur a rencontré une erreur")
 
+
+
 def trouver_utilisateur(conn,courriel,mdp_hash):
     with conn.get_curseur() as curseur:
         curseur.execute("SELECT * from collectionneurs " 
