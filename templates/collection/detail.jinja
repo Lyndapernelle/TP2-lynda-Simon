@@ -1,7 +1,7 @@
 {% extends "_base.jinja" %}
 
 {% block contenu %}
-   <div class="row justify-content-center  container mt-5">
+    <div class="row justify-content-center  container mt-5">
         <div class="col-md-7">
             <img src="{{lePokemon["photo"]}}" class="w-75" alt="Image du pokemon">
         </div>
@@ -22,15 +22,16 @@
                     <li class="list-group-item"><strong>Condition :</strong> {{lePokemon["condition"]}} </li>
                 </ul>
             </div>
-            {% if session["courriel"] == 'admin@garneau.ca' or 'id' in session == lePokemon["id_collectionneur"]%}  
+            {% if session["courriel"] == 'admin@garneau.ca' or session['id'] == lePokemon["id_collectionneur"]%}  
                 <form method="GET" class="mt-3" action="{{url_for('collection.modifier_carte',coll_id = lePokemon["id_item"])}}">
                     <button type="submit" class="btn btn-primary">Modifier la carte</button> 
                 </form>
             {% endif %}
+            {% if session["courriel"] == 'admin@garneau.ca' or session['id'] != lePokemon["id_collectionneur"]%}
+                <form method="GET" class="mt-3" action="{{url_for('collection.ajout_offre', id_carte = lePokemon['id'] )}}">
+                    <button type="submit" class="btn btn-primary">Faire un offre pour la carte</button> 
+                </form>
+            {% endif %}
         </div>
-
-   </div>
-   
-   
-
+    </div>
 {% endblock %}

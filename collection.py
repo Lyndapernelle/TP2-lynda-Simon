@@ -21,7 +21,7 @@ def page_de_collection():
         abort(401,"Vous devez être connecté pour accèder à cette page.")
     with bd.creer_connexion() as conn:
         pokemon = bd.affiche_carte_collection(conn=conn,id_collectionneur = session['id'])
-        return render_template("collection/page_collection.jinja", lesPokemons = pokemon)
+        return render_template("collection/page_collection.jinja", lesPokemons = pokemon, titre = "Collection")
 
 @bp_collection.route('/recherche',methods=["GET"])
 def recherche():
@@ -177,6 +177,46 @@ def afficher_detail(coll_id):
         if not resultat :
             abort(404,"La carte n'existe pas")
         return render_template("collection/detail.jinja", lePokemon = resultat, titre = "Détails")
+
+@bp_collection.route('/ajout_offre/<string:id_carte>', methods= ["POST", "GET"]) 
+def ajout_offre(id_carte):
+    if request.method == "GET":    
+        with bd.creer_connexion() as conn:
+            resultat = bd.offreCarteAjouter(conn=conn,id=id_carte)
+            if resultat is None:
+                abort(404, "La carte n'existe pas") 
+            return render_template("collection/ajout_offre.jinja", titre="Ajouter une offre", lePokemon = resultat)    
+    if request.method == "POST":
+        prix_offert = request.args.get("prix", default='')
+        try :
+            with bd.creer_connexion() as conn:
+                bd.ajouterOffre(conn=conn, id_carte=id_carte, id_collectionneur= session['id'], montant= prix_offert)
+                flash("L'offre à bien été ajouté",'succes')
+                return redirect(url_for('collection.page_de_collection'), code=303)                           
+        except Exception:
+                abort(500,"Le serveur a rencontré une erreur") 
+
+@bp_collection.route('/offres/<int:offre_id>', methods = ["POST", "GET"])
+def offres(offre_id):
+    if not 'courriel' in session:
+            abort(401,"")
+    if request.method == "GET":
+        with bd.creer_connexion as conn:
+            resultat = bd.obtenirOffres(conn = conn, id = session['id'])
+            if resultat is None:
+                abort(404, "La carte n'existe pas")
+        return render_template("collection/offres.jinja",offres= resultat, titre='Offres')
+    if request.method == "POST":
+        statut_carte = request.args.get('statut')
+        if statut_carte == 'refusée':
+                try:
+                    with bd.creer_connexion() as conn:
+                        bd.supprimerOffre(conn=conn, id=offre_id)
+                        flash('La carte a été supprimer des offres','succes')
+                        return redirect(url_for('collection.page_de_collection'), code=303)    
+                except Exception:
+                    abort(500,"Le serveur a rencontré une erreur")    
+                     
 
 def valide_condition(pCondition):
     """ Recoit la condition de la carte en paramêtre et retourne si elle est valide ou non """
