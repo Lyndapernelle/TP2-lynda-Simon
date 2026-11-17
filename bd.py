@@ -86,7 +86,6 @@ def affiche_carte_accueil(conn,id_collectionneur,statut):
             "SELECT ci.id, ci.card_id, ci.`condition`, ci.cost, ci.status, ci.photo, pc.name, pc.set_num, pc.types, pc.rarity "
             "FROM collection_items ci "
             "JOIN pokemon_card pc ON pc.id = ci.card_id "
-            "WHERE ci.id_collectionneur = %(id_collectionneur)s " 
             "AND ci.status = %(statut)s "
             "ORDER BY ci.added_date DESC",
             {
@@ -282,3 +281,45 @@ def obtenir_credit(conn, courriel):
         )
         resultat = curseur.fetchone()
         return resultat[0]
+
+def obtenirOffres(conn, id):
+    with conn.cursor() as cursor:
+        try:
+            
+               
+            
+            resultat = cursor.fetchall()
+            return resultat
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur")
+
+def supprimerOffre(conn, id):
+    with conn.cursor() as cursor:
+        cursor.execute("delete from offres "
+                       "where id = %(ids)s ",
+                       {
+                           'ids' : id
+                       }
+        )
+
+def offreCarteAjouter(conn, id):
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute("select ci.id, pc.name, ci.cost, ci.status, ci.id_collectionneur, c.courriel "
+                "from collection_items ci "
+                "join pokemon_card pc on pc.id = ci.card_id " 
+                "join collectionneurs c on c.id = ci.id_collectionneur "
+                "where pc.id = %(id_carte)s",
+                {
+                    'id_carte' : id
+                }
+            )  
+            resultat = cursor.fetchone()
+            return resultat
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur")
+                        
+
+def ajouterOffre(conn, id_carte, id_collectionneur, montant):
+    with conn.cursor() as cursor:
+        cursor.execute("insert  ")
