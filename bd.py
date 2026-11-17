@@ -79,7 +79,7 @@ def affiche_carte_collection(conn,id_collectionneur):
                 abort(500,"Le serveur a rencontré une erreur.")
         pokemon = curseur.fetchall()
         return pokemon
-def affiche_carte_accueil(conn,id_collectionneur,statut):
+def affiche_carte_accueil(conn, statut):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute(
@@ -89,7 +89,6 @@ def affiche_carte_accueil(conn,id_collectionneur,statut):
             "AND ci.status = %(statut)s "
             "ORDER BY ci.added_date DESC",
             {
-                'id_collectionneur': id_collectionneur,
                 'statut': statut
             }
             )
@@ -254,7 +253,7 @@ def lister_utilisateur(conn):
 def cartes_utilisateur(conn,courriel):
     with conn.get_curseur() as curseur:
         try:
-            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, "
+            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, c.courriel, pc.name "
             "pc.name, pc.set_num, pc.types, pc.rarity "
             "FROM collection_items ci "
             "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
@@ -303,7 +302,7 @@ def supprimerOffre(conn, id):
 def offreCarteAjouter(conn, id):
     with conn.cursor() as cursor:
         try:
-            cursor.execute("select ci.id, pc.name, ci.cost, ci.status, ci.id_collectionneur, c.courriel "
+            cursor.execute("select ci.id, pc.name, ci.cost, ci.status, ci.id_collectionneur, c.courriel, ci.photo, pc.id "
                 "from collection_items ci "
                 "join pokemon_card pc on pc.id = ci.card_id " 
                 "join collectionneurs c on c.id = ci.id_collectionneur "
@@ -319,5 +318,15 @@ def offreCarteAjouter(conn, id):
                         
 
 def ajouterOffre(conn, id_carte, id_collectionneur, montant):
-    with conn.cursor() as cursor:
-        cursor.execute("insert  ")
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("insert into offres `id_elem_collection`, `id_collectionneur`, `prix_offert`"
+                "values(%(carte_id)s,%(collectionneur_id)s,%(montant_collectionneur)s)",
+                {
+                    'carte_id' : id_carte,
+                    'collectionneur_id' : id_collectionneur,
+                    'montant_collectionneur' : montant
+                }
+            )
+    except Exception:
+        abort(500,"Le serveur a rencontré une erreur")

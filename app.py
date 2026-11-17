@@ -33,9 +33,9 @@ def index():
             abort(400, "statut invalide")
         with bd.creer_connexion() as conn:
             if statut == '':
-                pokemon = bd.affiche_carte_collection(conn=conn,id_collectionneur = session['id'])
+                pokemon = bd.accueil_invite(conn=conn)
             else:
-                pokemon = bd.affiche_carte_accueil(conn=conn,id_collectionneur = session['id'],statut =statut)
+                pokemon = bd.affiche_carte_accueil(conn=conn,statut =statut)
         return render_template("menu/index.jinja", lesPokemons = pokemon, statut= statut)
     else:    
         flash('Veuillez vous connecter pour avoir accès à toutes les fonctionnalités.','erreur')
