@@ -187,6 +187,17 @@ def accepter_offre(offre_id):
             bd.accepter_offre(conn=conn,id=offre_id)
             flash("L'offre a été accepté ")
             redirect(url_for('collection.page_de_collection'), code = 303)
+
+@bp_collection.route('/liste_offre')
+def lister_offre():
+    if not 'courriel' in session:
+        abort(401,"")
+    else:
+        with bd.creer_connexion() as conn:
+            resultat = bd.lister_offre(conn=conn, id_collectionneur= session['id'])
+        return render_template("collection/liste_offre.jinja", titre="Liste Des offres", resultat = resultat) 
+
+
 @bp_collection.route('/ajout_offre/<string:id_carte>', methods= ["POST", "GET"]) 
 def ajout_offre(id_carte):
     if request.method == "GET":    
@@ -205,26 +216,36 @@ def ajout_offre(id_carte):
         except Exception:
                 abort(500,"Le serveur a rencontré une erreur") 
 
-@bp_collection.route('/offres/<int:offre_id>', methods = ["POST", "GET"])
-def offres(offre_id):
+@bp_collection.route('/repondre_offre/<int:offre_id>', methods = ["POST", "GET"])
+def repondre_offre(offre_id):
     if not 'courriel' in session:
-            abort(401,"")
-    if request.method == "GET":
-        with bd.creer_connexion as conn:
-            resultat = bd.obtenirOffres(conn = conn, id = session['id'])
-            if resultat is None:
-                abort(404, "La carte n'existe pas")
-        return render_template("collection/offres.jinja",offres= resultat, titre='Offres')
-    if request.method == "POST":
-        statut_carte = request.args.get('statut')
-        if statut_carte == 'refusée':
-                try:
-                    with bd.creer_connexion() as conn:
-                        bd.supprimerOffre(conn=conn, id=offre_id)
-                        flash('La carte a été supprimer des offres','succes')
-                        return redirect(url_for('collection.page_de_collection'), code=303)    
-                except Exception:
-                    abort(500,"Le serveur a rencontré une erreur")    
+        abort(401,"")  
+    elif  request.method == "POST":
+        reponse = request.form.get('reponse')
+        try :
+            with bd.creer_connexion() as conn:
+                info = bd.obtenirOffres(conn=conn,id=offre_id)
+                if reponse == 'acceptée':
+                    
+                    credit_proprietaire = bd.obtenir_credit(conn=conn,courriel=session['courriel'])
+                    credit_collectionneur = bd.obtenir_credit(conn=conn, courriel= info['courriel'])
+                    prix_offert = info['prix_offert']
+                    credit_proprietaire += prix_offert
+                    credit_collectionneur -= prix_offert
+                    bd.modifier_credit(conn=conn,credit=credit_proprietaire, courriel=session['courriel'])
+                    bd.modifier_credit(conn=conn,credit=credit_collectionneur, courriel=info['courriel'])  
+                    bd.modifier_proprietaire(conn= conn, id_item = info['id_elem_collection'],id_nouv_proprio = info['id_collectionneur'])  
+                    bd.modifier_statut_offre(conn=conn,id=offre_id,statut='acceptée')
+                    flash("L'offre a été acceptée ",'succes')   
+                elif reponse == 'refusée':
+                    bd.modifier_statut_offre(conn=conn,id=offre_id,statut='refusée')
+                    flash("L'offre a été refusée ",'erreur')
+            return redirect(url_for('collection.page_de_collection'), code=303)       
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur") 
+
+
+
                      
 
 def valide_condition(pCondition):

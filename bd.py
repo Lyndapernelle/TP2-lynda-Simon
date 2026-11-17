@@ -79,7 +79,9 @@ def affiche_carte_collection(conn,id_collectionneur):
                 abort(500,"Le serveur a rencontré une erreur.")
         pokemon = curseur.fetchall()
         return pokemon
-def affiche_carte_accueil(conn,id_collectionneur,statut):
+
+
+def affiche_carte_accueil(conn,statut):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute(
@@ -89,7 +91,6 @@ def affiche_carte_accueil(conn,id_collectionneur,statut):
             "AND ci.status = %(statut)s "
             "ORDER BY ci.added_date DESC",
             {
-                'id_collectionneur': id_collectionneur,
                 'statut': statut
             }
             )
@@ -272,7 +273,7 @@ def cartes_utilisateur(conn,courriel):
             abort(500,"Le serveur a rencontré une erreur")
 
 def obtenir_credit(conn, courriel):
-    with conn.cursor() as curseur:
+    with conn.get_curseur() as curseur:
         curseur.execute(
             "SELECT credit FROM collectionneurs WHERE courriel = %(courriel)s",
             {
@@ -280,22 +281,68 @@ def obtenir_credit(conn, courriel):
             }
         )
         resultat = curseur.fetchone()
-        return resultat[0]
+        return resultat['credit']
+
+def modifier_credit(conn, credit, courriel):
+    try :
+        with conn.get_curseur() as curseur:
+            curseur.execute(
+                "UPDATE collectionneurs SET credit = %(credit)s WHERE courriel = %(courriel)s",
+                {
+                    'credit' : credit,
+                    'courriel': courriel
+                }
+            )
+    except Exception:
+        abort(500,"Le serveur a rencontré une erreur")
+
+def modifier_statut_offre(conn,id, statut):
+    try :
+        with conn.get_curseur() as curseur:
+            curseur.execute("UPDATE offres SET statut = %(statut)s "
+                "WHERE id = %(id_offre)s AND statut = 'en attente'",
+                {
+                    'statut': statut, 
+                    'id_offre': id
+                }
+            )
+    except Exception:
+        abort(500,"Le serveur a rencontré une erreur") 
+
+def modifier_proprietaire(conn,id_item,id_nouv_proprio):
+    try:
+        with conn.get_curseur() as curseur:
+            curseur.execute(
+                "UPDATE collection_items "
+                "SET id_collectionneur = %(id_nouveau)s "
+                "WHERE id = %(id_item)s",
+                {
+                    'id_nouveau': id_nouv_proprio, 
+                    'id_item': id_item
+                }
+            )
+    except Exception:
+        abort(500,"Le serveur a rencontré une erreur")
 
 def obtenirOffres(conn, id):
-    with conn.cursor() as cursor:
+    with conn.get_curseur() as curseur:
         try:
-            
-               
-            
-            resultat = cursor.fetchall()
+            curseur.execute(
+                    "select o.prix_offert, o.id_elem_collection, o.id_collectionneur, c.courriel from offres o "
+                    "join collectionneurs c on c.id = o.id_collectionneur "
+                    "where o.id = %(id_offre)s",
+                    {
+                        'id_offre' : id
+                    }
+                )
+            resultat = curseur.fetchone()
             return resultat
         except Exception:
             abort(500,"Le serveur a rencontré une erreur")
 
 def supprimerOffre(conn, id):
-    with conn.cursor() as cursor:
-        cursor.execute("delete from offres "
+    with conn.get_curseur() as curseur:
+        curseur.execute("delete from offres "
                        "where id = %(ids)s ",
                        {
                            'ids' : id
@@ -303,9 +350,9 @@ def supprimerOffre(conn, id):
         )
 
 def offreCarteAjouter(conn, id):
-    with conn.cursor() as cursor:
+    with conn.get_curseur() as curseur:
         try:
-            cursor.execute("select ci.id, pc.name, ci.cost, ci.status, ci.id_collectionneur, c.courriel "
+            curseur.execute("select ci.id, pc.name, ci.cost, ci.status, ci.id_collectionneur, c.courriel "
                 "from collection_items ci "
                 "join pokemon_card pc on pc.id = ci.card_id " 
                 "join collectionneurs c on c.id = ci.id_collectionneur "
@@ -314,11 +361,28 @@ def offreCarteAjouter(conn, id):
                     'id_carte' : id
                 }
             )  
-            resultat = cursor.fetchone()
+            resultat = curseur.fetchone()
             return resultat
         except Exception:
             abort(500,"Le serveur a rencontré une erreur")
                         
+def lister_offre(conn,id_collectionneur):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("select o.id, o.prix_offert, o.`date`, o.statut,pc.name,c.courriel "
+                "from offres o JOIN collection_items ci ON ci.id = o.id_elem_collection "
+                "join pokemon_card pc ON pc.id = ci.card_id "
+                " join collectionneurs c ON c.id = o.id_collectionneur "
+                " where o.statut = 'en attente' "
+                "and ci.id_collectionneur = %(id_collectionneur)s",
+                {
+                    'id_collectionneur' : id_collectionneur
+                }
+            )
+            resulat = curseur.fetchall()
+            return resulat
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur")
 
 def ajouterOffre(conn, id_carte, id_collectionneur, montant):
     with conn.cursor() as cursor:

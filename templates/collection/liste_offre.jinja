@@ -1,0 +1,44 @@
+{% extends "_base.jinja" %}
+
+{% block contenu %}
+
+ {%if resultat|length == 0%}
+        <div class="text-center">
+            <img src="../static/image/iconeVide.png" alt= "Collection Vide" class="w-25"/>
+            <p class ="fs-2 fw-bold mt-3"> Aucune offre 🥀</p>
+        </div>
+    {% else %}
+       <div class="container mt-5">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Carte</th>
+                            <th>Offert par</th>
+                            <th>Prix offert</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ligne in resultat %}
+                            <tr>
+                                <td>{{ ligne['name'] }}</td>
+                                <td>{{ ligne['courriel'] }}</td>
+                                <td>{{ ligne['prix_offert'] }} $</td>
+                                <td>{{ ligne['date']}}</td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('collection.repondre_offre', offre_id=ligne['id']) }}" class="d-flex justify-content-center gap-2">
+                                        <button name="reponse" value="acceptée" class="btn btn-sm btn-success">Accepter</button>
+                                        <button name="reponse" value="refusée" class="btn btn-sm btn-danger">Refuser</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
