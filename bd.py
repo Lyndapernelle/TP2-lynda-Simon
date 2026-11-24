@@ -81,17 +81,19 @@ def affiche_carte_collection(conn,id_collectionneur):
         return pokemon
 
 
-def affiche_carte_accueil(conn,statut):
+def affiche_carte_accueil(conn,statut,id_collectionneur):
     with conn.get_curseur() as curseur:
         try:
             curseur.execute(
-            "SELECT ci.id, ci.card_id, ci.`condition`, ci.cost, ci.status, ci.photo, pc.name, pc.set_num, pc.types, pc.rarity "
+            "SELECT ci.id,ci.id_collectionneur, ci.card_id, ci.`condition`, ci.cost, ci.status, ci.photo, pc.name, pc.set_num, pc.types, pc.rarity "
             "FROM collection_items ci "
             "JOIN pokemon_card pc ON pc.id = ci.card_id "
-            "AND ci.status = %(statut)s "
+            "WHERE (%(statut)s = '' OR ci.status = %(statut)s) " 
+            "AND (ci.id_collectionneur != %(id_collectionneur)s) "
             "ORDER BY ci.added_date DESC",
             {
-                'statut': statut
+                'statut': statut,
+                'id_collectionneur':id_collectionneur
             }
             )
         except Exception:
@@ -257,7 +259,7 @@ def lister_utilisateur(conn):
 def cartes_utilisateur(conn,courriel):
     with conn.get_curseur() as curseur:
         try:
-            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, c.courriel, pc.name "
+            curseur.execute( "SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, c.courriel, "
             "pc.name, pc.set_num, pc.types, pc.rarity "
             "FROM collection_items ci "
             "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
