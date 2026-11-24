@@ -12,7 +12,7 @@ import html
 from config import Config
 from collection import bp_collection
 from comptes import bp_comptes
-
+from api import bp_api
 config = Config()
 app = Flask(__name__)
 logger = create_logger(app)
@@ -23,6 +23,7 @@ app.secret_key = "f78bde7e6d92cfdf4d58392353e16032bb79417924d30ad7b6c733f00131ca
 
 app.register_blueprint(bp_collection, url_prefix='/collection')
 app.register_blueprint(bp_comptes, url_prefix='/compte')
+app.register_blueprint(bp_api, url_prefix="/api")
 
 @app.route('/',)
 def index():
