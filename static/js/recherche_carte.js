@@ -6,10 +6,10 @@ const nomCarte = document.getElementById("recherche_carte");
 const message_erreur = document.getElementById("msg_erreur_carte");
 const formulaire = document.getElementById("formRecherche");
 
-formulaire.addEventListener("submit", async function (event) {
+formulaire.addEventListener("submit", async function charger_collection (event) {
     
     event.preventDefault();
-
+   
     message_erreur.textContent="";
     nomCarte.classList.remove("is-invalid");
 
@@ -19,14 +19,15 @@ formulaire.addEventListener("submit", async function (event) {
     const parametres = {
         "nom_carte" : aRechercher
     }
-
     try{
         const resultats = await envoyerRequeteAjax(
             "/api/page_collection",
             "GET",
-            parametres,          
+            parametres,
+            controleur     
         )
-        console.log(resultats);
+
+        afficher_resultat(resultats.resultat)
     }
     catch (erreur){
         console.error(erreur);
@@ -35,5 +36,11 @@ formulaire.addEventListener("submit", async function (event) {
         nomCarte.classList.add("is-invalid")
     }  
 });
+
+function afficher_resultat(resultats){
+    resultats.forEach(resultat => {
+            
+    });
+}
 
 

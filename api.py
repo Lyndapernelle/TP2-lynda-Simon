@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, abort, render_template, session
+from flask import Blueprint, jsonify, request, abort, render_template, session 
 from werkzeug.exceptions import HTTPException
 
 import bd
@@ -12,7 +12,7 @@ def gerer_erreur_http(e):
         e.code,
     )
 
-@bp_api.route('/page_collection', methods=['GET'])
+@bp_api.route('/page_collection')
 def rechercheCollection():
     nom_carte = request.args.get('nom_carte')
     courriel_utilisateur = session.get('courriel')

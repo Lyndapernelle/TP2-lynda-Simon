@@ -6,7 +6,7 @@ import types
 import contextlib
 import mysql.connector
 from config import Config
-from flask import abort
+from flask import abort, jsonify
 from flask import flash
 config = Config
 
@@ -117,8 +117,7 @@ def rechercher(conn, pNom, pNumero, pType, pRarete, pSuperType):
                         'rarete_pokemon' : '%'+pRarete+'%',
                         'supertype_pokemon' : pSuperType
                     }
-                    )        
-             
+                    )                     
                 except Exception:
                     abort(500,"Le serveur a rencontré une erreur.")
                 resultat = curseur.fetchall()

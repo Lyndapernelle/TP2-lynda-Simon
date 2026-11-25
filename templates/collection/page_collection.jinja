@@ -17,12 +17,12 @@
         </div>
     {% else %}
         <div class="d-flex justify-content-center">
-            <form id="formRecherche" class="mt-4">
+            <form id="formRecherche" class="mt-4" action="/api/page_collection">
                 <label class="form-label" for="recherche_carte">Rechercher une carte: </label>
                 <div class="d-flex gap-2">
                     <input id="recherche_carte" name="nom_carte" class="form-control" placeholder="Rechercher une carte...">
                     <p class="text-danger" id="msg_erreur_carte"></p>
-                    <button type="submit" id="btnRecherche_collection" class="btn btn-primary">Recherche</button>
+                    <button type="submit" onclick="charger_collection" id="btnRecherche_collection" class="btn btn-primary">Recherche</button>
                 </div>
             </form>
         </div>
