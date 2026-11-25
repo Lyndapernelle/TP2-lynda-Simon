@@ -16,7 +16,8 @@ services:
 
   app:
     volumes:
-      - app_data:/app/static
+      - ./static:/app/static 
+      - app_data:/app/static/image
     build: .
     env_file: ".env"
     ports:

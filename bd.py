@@ -117,12 +117,35 @@ def rechercher(conn, pNom, pNumero, pType, pRarete, pSuperType):
                         'rarete_pokemon' : '%'+pRarete+'%',
                         'supertype_pokemon' : pSuperType
                     }
-                    )        
+                )        
              
                 except Exception:
                     abort(500,"Le serveur a rencontré une erreur.")
                 resultat = curseur.fetchall()
                 return resultat     
+def rechercher_nom(conn, pNom,id_collectionneur):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("SELECT ci.id,ci.id_collectionneur, " 
+                "ci.card_id, ci.`condition`, ci.cost, ci.status, ci.photo, " 
+                "pc.name, pc.set_num, pc.types, pc.rarity "
+                "FROM collection_items ci "
+                "JOIN pokemon_card pc ON pc.id = ci.card_id "+
+                "where pc.name like %(nom_pokemon)s "
+                "AND ci.id_collectionneur != %(id_collectionneur)s "
+                "AND ci.status like 'disponible' "+
+                "order by pc.name "+
+                "LIMIT 50",
+            {
+                'nom_pokemon': '%'+pNom+'%',
+                'id_collectionneur' : id_collectionneur  
+            }
+        )        
+        
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur.")
+        resultat = curseur.fetchall()
+        return resultat 
 
 def afficher_detail(conn,id):
     with conn.get_curseur() as curseur:
