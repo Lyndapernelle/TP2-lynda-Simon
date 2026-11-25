@@ -401,8 +401,8 @@ def lister_offre(conn,id_collectionneur):
             abort(500,"Le serveur a rencontré une erreur")
 
 def ajouterOffre(conn, id_item, id_collectionneur, montant):
-    try:
-        with conn.get_curseur() as curseur:
+    with conn.get_curseur() as curseur:
+        try:
             curseur.execute("insert into offres (`id_elem_collection`, `id_collectionneur`, `prix_offert`) "
                 "values(%(id_item)s,%(collectionneur_id)s,%(montant_collectionneur)s)",
                 {
@@ -411,5 +411,29 @@ def ajouterOffre(conn, id_item, id_collectionneur, montant):
                     'montant_collectionneur' : montant
                 }
             )
-    except Exception:
-        abort(500,"Le serveur a rencontré une erreur")
+        except Exception:
+            abort(500,"Le serveur a rencontré une erreur")
+
+def collection_recherche(conn, nom_carte, courriel_utilisateur):
+    with conn.get_curseur() as curseur: 
+        try:      
+            curseur.execute("SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, c.courriel "
+                "pc.name, pc.set_num, pc.types, pc.rarity "
+                "FROM collection_items ci "
+                "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
+                "JOIN pokemon_card pc ON pc.id = ci.card_id "
+                "WHERE c.courriel = %(courriel)s ORDER BY ci.added_date DESC "
+                "AND pc.name LIKE %(carte)s "
+                "ORDER BY ci.added_date DESC",
+                {
+                    'courriel': courriel_utilisateur,
+                    'carte' : f'%{nom_carte}%'
+                }
+            )
+            resultat = curseur.fetchall()
+            return resultat
+        except Exception:
+            return jsonify({
+                    "error": True,
+                    "message": "Une erreur serveur est survenue."
+             }), 500       

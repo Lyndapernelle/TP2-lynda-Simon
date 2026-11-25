@@ -72,9 +72,7 @@ def connexion():
                 session['id'] = info['id']
                 flash('Connexion au compte effectué avec succès','succes')
                 return redirect("/", code=303)              
-           
-
-       
+             
 @bp_comptes.route('/creer', methods=["POST", "GET"])
 def creer():
     if not 'courriel' in session:
