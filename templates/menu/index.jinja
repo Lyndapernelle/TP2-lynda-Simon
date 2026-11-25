@@ -8,10 +8,11 @@
 
 {% block contenu %}
     <div class="row align-items-center justify-content-center mt-4">
-        <div class="d-flex justify-content-center mt-4 col-md-4 align-items-center">
+        <form class="d-flex justify-content-center mt-4 col-md-4 align-items-center position-relative" method = 'GET' id='form_recherche'>
             <label for="nom_pokemon" class="form-label me-3">Nom du Pokemon :</label>
             <input type="text" name="nom_pokemon" id="nom_pokemon" class="form-control w-50 bg-white border border-2 border-primary rounded-3"/>
-        </div>
+            <div id="div-suggestions" class="suggestions"></div>
+        </form>
         {% if 'courriel' in session%}  
             <form method="GET" class="d-flex justify-content-center mt-4 col-md-4"  action="{{ url_for('index') }}">
                 <select name="statut" class="form-select w-auto me-4 bg-white border border-2 border-primary rounded-3">

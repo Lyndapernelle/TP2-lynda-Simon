@@ -50,20 +50,27 @@ nav, main, footer
 .afficher
     display: block
 
-.carte 
-    div
-        @extend .card
-        width: 17 rem
+.suggestions
+    display: none
+    position: absolute
+    top: 100%
+    right: 0
+    width: 50%
+    z-index: 10
+    background-color: white
+    @extend .border, .rounded-3, .shadow-sm
 
-        img
-            @extend .card-img-top
+    &.afficher
+        display: block
 
-        >div
-            @extend .card-body
-            h5
-                @extend .card-title
-        ul
-            @extend .list-group, .list-group-flush
+    ul
+        list-style: none
+        margin: 0
+        padding: 0
 
-            li
-                @extend .list-group-item
+    li
+        padding: 0.4rem 0.75rem
+        cursor: pointer
+
+        &:hover
+            background-color: #e9ecef

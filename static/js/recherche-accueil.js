@@ -142,13 +142,60 @@ async function rechercher() {
     document.addEventListener('click',gererClickFenetre)
 }
 
+async function afficher_suggestion() {
+    const achercher = nom_pokemon.value.trim();
+    if (controleur != null) {
+        controleur.abort();
+    }
+
+    if(achercher.length <3){
+        liste_pokemon.innerHTML = contenuInitial
+        return;
+    }
+    controleur = new AbortController()
+
+    const parametres = {
+    "nom_pokemon": achercher,
+    }
+    try {
+        const resultat = await envoyerRequeteAjax(
+        "/api/recherche",
+        "GET",
+        parametres, 
+        controleur     
+        );
+        
+        liste_pokemon.textContent="";
+        if (resultat.pokemon.length===0) {
+            const messsage='Aucun résultat  🥀'
+            const div= afficher_erreur(messsage)
+            liste_pokemon.append(div);
+            return;
+        }
+
+        resultat.pokemon.forEach(pokemon => {
+            const carte = creerCarte(pokemon,resultat.peut_faire_offre);
+            liste_pokemon.append(carte);
+        });
+    } catch (err) {
+        if (err.name === "AbortError") {
+            console.log("Une requête Ajax a été annulée")
+        } else {
+            console.error("Erreur lors d'une requête Ajax");
+            console.error(err);
+            liste_pokemon.textContent = "Erreur lors de la requête. Veuillez réessayer."
+        }
+    }
+    document.addEventListener('click',gererClickFenetre)
+}
+
 
 function initialisation() {
   liste_pokemon = document.getElementById('liste-pokemon')
   contenuInitial = liste_pokemon.innerHTML;
   nom_pokemon = document.getElementById('nom_pokemon');
   document.getElementById("nom_pokemon").addEventListener("input", rechercher);
-  document.getElementById("nom_pokemon").addEventListener("submit", rechercher);
+  document.getElementById("form_recherche").addEventListener("submit", rechercher);
 }
 
 window.addEventListener("load", initialisation);
