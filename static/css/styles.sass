@@ -43,3 +43,27 @@ nav, main, footer
 
     p
         @extend .my-2
+
+.masquer
+    display: none
+
+.afficher
+    display: block
+
+.carte 
+    div
+        @extend .card
+        width: 17 rem
+
+        img
+            @extend .card-img-top
+
+        >div
+            @extend .card-body
+            h5
+                @extend .card-title
+        ul
+            @extend .list-group, .list-group-flush
+
+            li
+                @extend .list-group-item
