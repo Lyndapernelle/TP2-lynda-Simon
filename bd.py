@@ -6,7 +6,7 @@ import types
 import contextlib
 import mysql.connector
 from config import Config
-from flask import abort
+from flask import abort, jsonify
 from flask import flash
 config = Config
 

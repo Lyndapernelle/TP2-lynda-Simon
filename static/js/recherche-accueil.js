@@ -103,9 +103,10 @@ async function rechercher() {
 
     if(achercher.length <3){
         liste_pokemon.innerHTML = contenuInitial
-        return;
+        
     }
-    controleur = new AbortController()
+    else{
+        controleur = new AbortController()
 
     const parametres = {
     "nom_pokemon": achercher,
@@ -122,15 +123,16 @@ async function rechercher() {
         if (resultat.pokemon.length===0) {
             const messsage='Aucun résultat  🥀'
             const div= afficher_erreur(messsage)
-            liste_pokemon.append(div);
-            return;
+            liste_pokemon.append(div);            
         }
-
-        resultat.pokemon.forEach(pokemon => {
+        else{
+             resultat.pokemon.forEach(pokemon => {
             const carte = creerCarte(pokemon,resultat.peut_faire_offre);
             liste_pokemon.append(carte);
         });
-    } catch (err) {
+        }  
+    } 
+    catch (err) {
         if (err.name === "AbortError") {
             console.log("Une requête Ajax a été annulée")
         } else {
@@ -140,6 +142,7 @@ async function rechercher() {
         }
     }
     document.addEventListener('click',gererClickFenetre)
+    }
 }
 
 async function afficher_suggestion() {
