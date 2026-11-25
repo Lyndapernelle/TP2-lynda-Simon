@@ -37,8 +37,8 @@ def connexion():
                 valide_courriel = True
                 message_courriel_vide = "Veuillez entrer un courriel"
             elif (not courriel_regex.match(courriel_utilisateur)):
-                    valide_courriel = True
-                    message_courriel_regex = 'Le courriel doit ressembler à ceci : nom@domaine.com'
+                valide_courriel = True
+                message_courriel_regex = 'Le courriel doit ressembler à ceci : nom@domaine.com'
             if (not mdp_clair):
                 valide_mdp = True
                 message_mdp_vide = "Veuillez entrer un mot de passe"  

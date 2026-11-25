@@ -1,13 +1,30 @@
 {% extends "_base.jinja" %}
 
+{% block scripts %}
+    <script defer="defer"
+        src="/static/js/utils-ajax.js"></script>
+    <script defer="defer"
+        src="/static/js/recherche-compte.js"></script>
+{% endblock %}
+
 {% block contenu %}
 
- {%if resultat|length == 0%}
+    {%if resultat|length == 0%}
         <div class="text-center">
             <img src="../static/image/iconeVide.png" alt= "Collection Vide" class="w-25"/>
             <p class ="fs-2 fw-bold mt-3"> Aucun utilisateur 🥀</p>
         </div>
     {% else %}
+        <div class="d-flex justify-content-center">
+            <form id="formRecherche" class="mt-4" action="/api/liste_utilisateur">
+                <label class="form-label" for="recherche_utilisateur">Rechercher une carte: </label>
+                <div class="d-flex gap-2">
+                    <input id="recherche_utilisateur" name="courriel_utilisateur" class="form-control" placeholder="Rechercher un utilisateur...">
+                    <p class="text-danger" id="msg_erreur_courriel"></p>
+                    <button type="submit" onclick="charger_utilisateur" id="btnRecherche_collection" class="btn btn-primary">Recherche</button>
+                </div>
+            </form>
+        </div>
         <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
             {%for ligne in resultat %}
                 <div class="card" style="width: 15rem;">

@@ -437,3 +437,21 @@ def collection_recherche(conn, nom_carte, courriel_utilisateur):
                     "error": True,
                     "message": "Une erreur serveur est survenue."
              }), 500       
+
+def trouver_utilisateur_avec_courriel(conn,courriel):
+    with conn.get_curseur() as curseur:
+        try:
+
+            curseur.execute("SELECT * from collectionneurs " 
+            "WHERE courriel = %(courriel)s ",
+            {
+                'courriel' : courriel, 
+            }
+            )
+            return curseur.fetchone()
+        except Exception:
+            return jsonify({
+                "error" : True,
+                "message": "Un erreur est survenu, veuillez réessayer."
+            }), 500
+                

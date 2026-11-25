@@ -18,9 +18,8 @@
                 <a class="navbar-brand text-white fw-bold fs-1" href="/">
                     Pokémon TCG Collection
                 </a>
-                <div class="d-flex gap-2">
-                      
-                    {% if 'courriel' in session%}      
+                <div class="d-flex gap-2">              
+                    {% if 'courriel' in session %}      
                         <a class="btn btn-warning rounded-pill px-3" href="/collection/recherche">
                                 Ajouter une carte
                         </a>
@@ -33,14 +32,15 @@
                         <a class="btn btn-warning rounded-pill px-3" href="/collection/liste_offre">
                             Voir les offres
                         </a>
-                        {%if session['courriel'] == 'admin@garneau.ca'  %}
+                        {% if session['courriel'] == 'admin@garneau.ca' %}
                             <a class="btn btn-warning rounded-pill px-3" href="/compte/liste_utilisateur">
                                 Liste des utilisateurs
                             </a>
                             <a class="btn btn-warning rounded-pill px-3" href="/compte/creer">
                                 Créer un compte
                             </a>
-                        {%endif%}
+                            <a class="btn btn-warning rounded-pill px-3" href="/api/creer-compte-rapide">
+                        {% endif %}
                     {% else %}   
                         <a class="btn btn-warning rounded-pill px-3" href="/compte/connexion">
                             Se connecter
