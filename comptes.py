@@ -128,7 +128,7 @@ def creer():
                         erreur_courriel='Ce courriel est déjà utilisé'
                         return render_template('compte/creer_compte.jinja',message_courriel= erreur_courriel, message_mdp= erreur_mdp, message_conf_mdp = '',
                                                            courriel = courriel)
-@bp_comptes.route('/liste_utilisateur')
+@bp_comptes.route('/liste_utilisateur',methods=["GET"])
 def lister_utilisateur():
     if not 'courriel' in session:
         abort(401,"")

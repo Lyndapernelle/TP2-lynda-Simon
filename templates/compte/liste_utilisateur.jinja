@@ -1,14 +1,29 @@
 {% extends "_base.jinja" %}
 
+{% block scripts %}
+    <script defer="defer" src="/static/js/utils-ajax.js"></script>
+    <script defer="defer" src="/static/js/recherche_courriel.js"></script>
+{% endblock %}
 {% block contenu %}
 
- {%if resultat|length == 0%}
-        <div class="text-center">
+    <div class="d-flex justify-content-around mt-4 align-items-center">
+        <div class=" justify-content-center mt-4 align-items-center">
+            <label for="courriel" class="form-label me-3">Courriel :</label>
+            <input type="text" name="courriel" id="courriel" class="form-control w-50 bg-white border border-2 border-primary rounded-3 w-auto"/>  
+        </div> 
+        <form method="POST"  id='form-ajout'>
+            <button type="submit" class="btn btn-primary m-3" >Ajouter un compte</button>
+        </form>
+    </div>
+    
+
+    {%if resultat|length == 0%}
+            <div class="text-center">
             <img src="../static/image/iconeVide.png" alt= "Collection Vide" class="w-25"/>
             <p class ="fs-2 fw-bold mt-3"> Aucun utilisateur 🥀</p>
         </div>
     {% else %}
-        <div class="d-flex flex-wrap gap-3 justify-content-center mt-5">
+        <div class="d-flex flex-wrap gap-3 justify-content-center mt-5" id = 'liste_utilisateur'>
             {%for ligne in resultat %}
                 <div class="card" style="width: 15rem;">
                     <img src="../static/image/image_utilisateur.png" class="card-img-top" alt="Image Utilisateur">

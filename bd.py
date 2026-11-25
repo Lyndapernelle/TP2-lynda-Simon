@@ -263,7 +263,7 @@ def trouver_courriel(conn,courriel_utilisateur):
             abort(500,"Le serveur a rencontré une erreur")
 def creer_compte(conn,courriel,mdp_hash):
     with conn.get_curseur() as curseur:
-        curseur.execute("INSERT INTO collectionneurs (`courriel`,`mot_de_passe`,`credit`)"
+        curseur.execute("INSERT INTO collectionneurs (`courriel`,`mot_de_passe`,`credit`) "
         "VALUES(%(courriel)s, %(mdp_hash)s, 100)",
         {
             'courriel': courriel,
@@ -416,24 +416,31 @@ def ajouterOffre(conn, id_item, id_collectionneur, montant):
 
 def collection_recherche(conn, nom_carte, courriel_utilisateur):
     with conn.get_curseur() as curseur: 
-        try:      
-            curseur.execute("SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, c.courriel "
-                "pc.name, pc.set_num, pc.types, pc.rarity "
-                "FROM collection_items ci "
-                "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
-                "JOIN pokemon_card pc ON pc.id = ci.card_id "
-                "WHERE c.courriel = %(courriel)s ORDER BY ci.added_date DESC "
-                "AND pc.name LIKE %(carte)s "
-                "ORDER BY ci.added_date DESC",
+        
+        curseur.execute("SELECT ci.id, ci.`condition`, ci.cost, ci.status, ci.added_date, ci.photo, c.courriel "
+            "pc.name, pc.set_num, pc.types, pc.rarity "
+            "FROM collection_items ci "
+            "JOIN collectionneurs c ON c.id = ci.id_collectionneur "
+            "JOIN pokemon_card pc ON pc.id = ci.card_id "
+            "WHERE c.courriel = %(courriel)s ORDER BY ci.added_date DESC "
+            "AND pc.name LIKE %(carte)s "
+            "ORDER BY ci.added_date DESC",
+            {
+                'courriel': courriel_utilisateur,
+                'carte' : f'%{nom_carte}%'
+            }
+        )
+        resultat = curseur.fetchall()
+        return resultat
+
+def rechercher_utilisateur(conn,courriel):
+    with conn.get_curseur() as curseur:
+        try:
+            curseur.execute("SELECT * from collectionneurs WHERE courriel like %(courriel)s ",
                 {
-                    'courriel': courriel_utilisateur,
-                    'carte' : f'%{nom_carte}%'
-                }
-            )
+                    'courriel': '%'+courriel+'%'
+                })
             resultat = curseur.fetchall()
             return resultat
-        except Exception:
-            return jsonify({
-                    "error": True,
-                    "message": "Une erreur serveur est survenue."
-             }), 500       
+        except Exception :
+            abort(500,"Le serveur a rencontré une erreur")

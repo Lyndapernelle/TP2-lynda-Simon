@@ -3,7 +3,9 @@ from flask import Blueprint, jsonify, request,session
 from time import sleep
 from werkzeug.exceptions import HTTPException
 
+import math
 import bd
+import hashlib
 
 bp_api = Blueprint("api", __name__)
 
@@ -22,12 +24,7 @@ def rechercher():
     return jsonify({"pokemon":pokemons,
                     "peut_faire_offre":peut_faire_offre})
 
-@bp_api.errorhandler(HTTPException)
-def gerer_erreur_http(e):
-    return (
-        jsonify({"code": e.code, "nom": e.name, "description": e.description}),
-        e.code,
-    )
+
 
 @bp_api.route('/page_collection', methods=['GET'])
 def rechercheCollection():
@@ -51,4 +48,35 @@ def rechercheCollection():
         }), 200
       
 
+@bp_api.route('/recherche-compte')
+def rechercher_courriel():
+    courriel = request.args.get('mot_cle',default='').strip()
+    if(len(courriel)<3):
+       return jsonify([])
+    with bd.creer_connexion() as conn:
+        comptes = bd.rechercher_utilisateur(conn=conn,courriel= courriel)
+    sleep(0.5)
+    return jsonify(comptes)
 
+@bp_api.route('/creer-compte-rapide',methods=["POST","GET"])
+def creer_rapide():
+    if request.method == 'POST':
+        utilisateur= None
+        courriel = request.form.get('courriel',default='')
+        mdp = request.form.get('mdp',default='')
+        mdp_hash = hasher_mdp(mdp)
+        with bd.creer_connexion() as conn:
+            bd.creer_compte(conn=conn,courriel=courriel,mdp_hash=mdp_hash)
+            utilisateur =  bd.trouver_utilisateur(conn=conn,courriel=courriel,mdp_hash=mdp_hash)
+        sleep(0.5)
+        return jsonify(utilisateur)
+
+def hasher_mdp(mdp_clair):
+    return hashlib.sha512(mdp_clair.encode()).hexdigest()
+
+@bp_api.errorhandler(HTTPException)
+def gerer_erreur_http(e):
+    return (
+        jsonify({"code": e.code, "nom": e.name, "description": e.description}),
+        e.code,
+    )
